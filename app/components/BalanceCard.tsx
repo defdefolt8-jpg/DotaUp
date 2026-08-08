@@ -27,8 +27,9 @@ export function BalanceCard({
 
         <div className="mt-7 flex items-end gap-3">
           <div className="text-[62px] font-semibold leading-none text-white">
-            {balance.toFixed(2)}
+            {Math.round(balance).toLocaleString("ru-RU")}
           </div>
+          <div className="mb-3 text-sm font-black tracking-[0.18em] text-[#8dfc52]">COIN</div>
           <div className="mb-2 flex h-9 w-9 items-center justify-center rounded-full bg-[#8dfc52]/10 text-[#8dfc52]">
             <Gift className="h-4 w-4" />
           </div>

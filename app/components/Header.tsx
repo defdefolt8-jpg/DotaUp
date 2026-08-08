@@ -32,7 +32,7 @@ export function Header({ balance, onTopUp }: HeaderProps) {
           <div className="hidden items-center gap-2 rounded-xl border border-[#242a35] bg-[#141820] px-4 py-2 sm:flex">
             <CircleDollarSign className="h-4 w-4 text-[#8dfc52]" />
             <span className="text-sm text-zinc-500">Баланс</span>
-            <strong className="text-base font-semibold text-white">{balance.toFixed(2)}</strong>
+            <strong className="text-base font-semibold text-white">{Math.round(balance).toLocaleString("ru-RU")} COIN</strong>
           </div>
 
           <button

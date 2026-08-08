@@ -110,6 +110,8 @@
   const $ = (selector, root = document) => root.querySelector(selector);
   const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
   const steamLoginUrl = '/api/auth/steam/login?return_to=/';
+  const steamLogoutUrl = '/api/auth/logout?return_to=/';
+  const profileStateKey = 'dotaupProfileState';
   const money = value => `${Math.round(value).toLocaleString('ru-RU')} COIN`;
   const itemById = id => items.find(item => item.id === Number(id));
   const ownedItems = () => state.ownedIds.map(itemById).filter(Boolean);
@@ -131,6 +133,51 @@
 
   function timestampLabel() {
     return new Date().toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+  }
+
+  function itemSnapshot(item) {
+    return item ? {
+      id: item.id,
+      weapon: item.weapon,
+      skin: item.skin,
+      wear: item.wear,
+      price: item.price,
+      color: item.color,
+      shape: item.shape,
+      image: item.image || null,
+      imageLabel: item.imageLabel || '',
+      imageAccent: item.imageAccent || item.color
+    } : null;
+  }
+
+  function saveProfileState() {
+    try {
+      const payload = {
+        balance: state.balance,
+        ownedIds: state.ownedIds,
+        ownedItems: ownedItems().map(itemSnapshot).filter(Boolean),
+        itemHistory: state.itemHistory,
+        gameHistory: state.gameHistory,
+        user: state.user,
+        updatedAt: new Date().toISOString()
+      };
+      localStorage.setItem(profileStateKey, JSON.stringify(payload));
+    } catch {
+      // Local persistence is only used to keep the demo UI in sync.
+    }
+  }
+
+  function loadProfileState() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(profileStateKey) || '{}');
+      if (Number.isFinite(Number(saved.balance))) state.balance = Number(saved.balance);
+      if (Array.isArray(saved.ownedIds)) state.ownedIds = saved.ownedIds.map(Number).filter(id => itemById(id));
+      if (Array.isArray(saved.itemHistory)) state.itemHistory = saved.itemHistory;
+      if (Array.isArray(saved.gameHistory)) state.gameHistory = saved.gameHistory;
+      if (saved.user && typeof saved.user === 'object') state.user = { ...state.user, ...saved.user };
+    } catch {
+      saveProfileState();
+    }
   }
 
   function setMarketSyncStatus(text, tone = '') {
@@ -179,6 +226,7 @@
     $$('#balanceValue').forEach(node => { node.textContent = money(state.balance); });
     const profileBalance = $('#profileBalanceValue');
     if (profileBalance) profileBalance.textContent = money(state.balance);
+    saveProfileState();
   }
 
   function renderLive() {
@@ -243,6 +291,7 @@
         state.user.name = payload.user.displayName || state.user.name;
         state.user.steamId = payload.user.steamId ? `ID ${payload.user.steamId}` : state.user.steamId;
         state.user.avatar = payload.user.avatar || null;
+        saveProfileState();
       }
     } catch {
       state.isLoggedIn = false;
@@ -492,6 +541,7 @@
       renderSelection();
       renderGrid();
       renderProfile();
+      saveProfileState();
     }, state.spinDuration);
   }
 
@@ -526,7 +576,9 @@
   function withdrawItem(id) {
     const item = itemById(id);
     if (!item || !state.ownedIds.includes(id)) return;
-    showToast(`Р”РµРјРѕ-РІС‹РІРѕРґ ${item.skin} РІ Steam`, 'success');
+    const tradeUrl = window.prompt('Вставь Steam trade-ссылку для вывода предмета');
+    if (!tradeUrl) return;
+    showToast(`Заявка на вывод ${item.skin} создана`, 'success');
   }
 
   function renderProfileInventory() {
@@ -756,6 +808,7 @@
   });
 
   loadChancePresets();
+  loadProfileState();
   updateBalance();
   setMarketSyncStatus('Steam Market: РїРѕРґРєР»СЋС‡РµРЅРёРµвЂ¦');
   renderLive();

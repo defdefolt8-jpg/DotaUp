@@ -9,3 +9,32 @@ export type ProfileData = {
   withdrawnAmount: number;
   upgrades: number;
 };
+
+export type SiteItem = {
+  id: number;
+  weapon: string;
+  skin: string;
+  wear: string;
+  price: number;
+  color: string;
+  image?: string | null;
+  imageLabel?: string;
+};
+
+export type ItemHistoryEntry = {
+  id: string;
+  itemId: number;
+  price: number;
+  status: string;
+  at: string;
+};
+
+export type GameHistoryEntry = {
+  id: string;
+  targetSkin: string;
+  chance: number;
+  stake: number;
+  roll: number;
+  result: string;
+  at: string;
+};
