@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Footer } from "./Footer";
 import { Header } from "./Header";
 import { ProfileCard } from "./ProfileCard";
@@ -21,8 +21,28 @@ export function ProfilePage() {
   const [sellingEnabled, setSellingEnabled] = useState(false);
   const [promoCode, setPromoCode] = useState("");
   const [copied, setCopied] = useState(false);
+  const [steamProfile, setSteamProfile] = useState<Partial<ProfileData>>({});
 
-  const profile = useMemo(() => mockProfile, []);
+  const profile = useMemo(() => ({ ...mockProfile, ...steamProfile }), [steamProfile]);
+
+  useEffect(() => {
+    let alive = true;
+
+    fetch("/api/auth/me", { credentials: "include", cache: "no-store" })
+      .then((response) => response.json())
+      .then((payload: { authenticated?: boolean; user?: { steamId?: string; displayName?: string } | null }) => {
+        if (!alive || !payload.authenticated || !payload.user?.steamId) return;
+        setSteamProfile({
+          nickname: payload.user.displayName || `Steam ${payload.user.steamId.slice(-4)}`,
+          id: payload.user.steamId,
+        });
+      })
+      .catch(() => undefined);
+
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   const handleCopyId = async () => {
     try {

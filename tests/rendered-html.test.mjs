@@ -56,3 +56,21 @@ test("keeps profile route component-based and branded", async () => {
   assert.match(footer, /Поддержка/);
   assert.match(layout, /DotaUp/);
 });
+
+test("uses real Steam OpenID routes instead of demo-only auth", async () => {
+  const [worker, script, index] = await Promise.all([
+    readFile(new URL("../worker/index.ts", import.meta.url), "utf8"),
+    readFile(new URL("../public/site/script.js", import.meta.url), "utf8"),
+    readFile(new URL("../public/site/index.html", import.meta.url), "utf8"),
+  ]);
+
+  assert.match(worker, /\/api\/auth\/steam\/login/);
+  assert.match(worker, /\/api\/auth\/steam\/callback/);
+  assert.match(worker, /check_authentication/);
+  assert.match(worker, /dotaup_steam_session/);
+  assert.match(script, /\/api\/auth\/me/);
+  assert.match(script, /\/api\/auth\/steam\/login\?return_to=\//);
+  assert.doesNotMatch(script, /dotaupSteamLoggedIn/);
+  assert.match(index, /id="steamLoginButton"/);
+  assert.doesNotMatch(index, /class="steam-button" type="button" data-modal-open/);
+});
