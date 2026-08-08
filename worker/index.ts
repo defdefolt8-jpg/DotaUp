@@ -1,6 +1,7 @@
 /** Cloudflare Worker entry point for the vinext-starter template. */
 import { handleImageOptimization, DEFAULT_DEVICE_SIZES, DEFAULT_IMAGE_SIZES } from "vinext/server/image-optimization";
 import handler from "vinext/server/app-router-entry";
+import { getMarketPayload, syncSteamCatalog } from "./market-sync";
 
 interface Env {
   ASSETS: Fetcher;
@@ -38,6 +39,38 @@ const worker = {
           return result.response();
         },
       }, allowedWidths);
+    }
+
+    if (url.pathname === "/api/market-items" && request.method === "GET") {
+      try {
+        const payload = await getMarketPayload(env, ctx);
+        return Response.json(payload, {
+          headers: {
+            "cache-control": "no-store",
+          },
+        });
+      } catch (error) {
+        return Response.json({
+          status: "error",
+          message: error instanceof Error ? error.message : "Failed to load Steam Market data",
+        }, { status: 500 });
+      }
+    }
+
+    if (url.pathname === "/api/market-sync" && request.method === "POST") {
+      try {
+        const rows = await syncSteamCatalog(env);
+        return Response.json({
+          status: "live",
+          syncedAt: rows.length ? rows[0].updated_at : new Date().toISOString(),
+          count: rows.length,
+        });
+      } catch (error) {
+        return Response.json({
+          status: "error",
+          message: error instanceof Error ? error.message : "Steam sync failed",
+        }, { status: 500 });
+      }
     }
 
     return handler.fetch(request, env, ctx);

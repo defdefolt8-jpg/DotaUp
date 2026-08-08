@@ -98,6 +98,10 @@
       level: 27,
       bestDropId: 8
     },
+    marketSync: {
+      status: 'offline',
+      syncedAt: null
+    },
     itemHistory: [],
     gameHistory: []
   };
@@ -125,6 +129,48 @@
 
   function timestampLabel() {
     return new Date().toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+  }
+
+  function setMarketSyncStatus(text, tone = '') {
+    const node = $('#marketSyncStatus');
+    if (!node) return;
+    node.textContent = text;
+    node.className = `market-sync-status${tone ? ` ${tone}` : ''}`;
+  }
+
+  async function hydrateMarketPrices() {
+    setMarketSyncStatus('Steam Market: обновляем цены…');
+    try {
+      const response = await fetch('/api/market-items', { cache: 'no-store' });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const data = await response.json();
+      if (Array.isArray(data.items)) {
+        const synced = new Map(data.items.map(item => [Number(item.id), item]));
+        items.forEach(item => {
+          const live = synced.get(item.id);
+          if (!live) return;
+          if (Number.isFinite(Number(live.price)) && Number(live.price) > 0) item.price = Math.round(Number(live.price));
+          if (live.image) item.image = live.image;
+          if (live.marketName) item.marketName = live.marketName;
+        });
+        state.marketSync.status = data.status || 'cached';
+        state.marketSync.syncedAt = data.syncedAt || null;
+        updateBalance();
+        renderSelection();
+        renderGrid();
+        renderProfile();
+      }
+      const syncLabel = state.marketSync.syncedAt
+        ? new Date(state.marketSync.syncedAt).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })
+        : 'только что';
+      if (state.marketSync.status === 'refreshing') {
+        setMarketSyncStatus(`Steam Market: показан кэш · фоновое обновление · ${syncLabel}`, 'warn');
+      } else {
+        setMarketSyncStatus(`Steam Market: цены синхронизированы · ${syncLabel}`, 'ok');
+      }
+    } catch (error) {
+      setMarketSyncStatus('Steam Market: недоступен, показаны сохранённые цены', 'warn');
+    }
   }
 
   function updateBalance() {
@@ -646,9 +692,11 @@
   loadChancePresets();
   state.isLoggedIn = localStorage.getItem('dotaupSteamLoggedIn') === '1';
   updateBalance();
+  setMarketSyncStatus('Steam Market: подключение…');
   renderLive();
   setMarketView('inventory');
   renderSelection();
   renderProfile();
   updateChance(state.chance);
+  hydrateMarketPrices();
 })();
