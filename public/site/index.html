@@ -94,6 +94,23 @@
               <button type="button" data-chance="30">30%</button>
               <button type="button" data-chance="15">15%</button>
             </div>
+            <div class="upgrade-options">
+              <div class="speed-switch" aria-label="Скорость анимации">
+                <button class="active" type="button" data-speed="normal">4 SEC</button>
+                <button type="button" data-speed="fast">FAST · 1 SEC</button>
+              </div>
+              <button class="chance-settings-button" id="chanceSettingsButton" type="button" aria-label="Редактировать проценты" aria-expanded="false">⚙</button>
+            </div>
+            <div class="chance-editor" id="chanceEditor" aria-hidden="true">
+              <strong>Настройка процентов</strong>
+              <div class="chance-editor-inputs">
+                <label><span>1</span><input type="number" min="1" max="95" value="60" data-chance-input></label>
+                <label><span>2</span><input type="number" min="1" max="95" value="45" data-chance-input></label>
+                <label><span>3</span><input type="number" min="1" max="95" value="30" data-chance-input></label>
+                <label><span>4</span><input type="number" min="1" max="95" value="15" data-chance-input></label>
+              </div>
+              <button id="saveChancePresets" type="button">Сохранить</button>
+            </div>
           </div>
         </section>
 

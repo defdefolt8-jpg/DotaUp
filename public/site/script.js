@@ -30,7 +30,7 @@
     shield: '<path d="M50 6 87 20v17c0 23-17 33-37 40-20-7-37-17-37-40V20Z"/><path d="M50 17v47M25 31h50"/>'
   };
 
-  const state = { sourceIds: new Set(), targetId: null, chance: 45, mode: 'under', spinning: false, balance: 1250 };
+  const state = { sourceIds: new Set(), targetId: null, chance: 45, mode: 'under', spinning: false, spinDuration: 4000, chancePresets: [60, 45, 30, 15], balance: 1250 };
   const $ = (selector, root = document) => root.querySelector(selector);
   const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
   const money = value => `$${value.toFixed(2)}`;
@@ -142,12 +142,31 @@
     showToast(`Подобран ближайший скин под шанс ${desiredChance}%`, 'success');
   }
 
+  function applyChancePresets(values) {
+    state.chancePresets = values;
+    $$('.multiplier-row button').forEach((button, index) => {
+      button.dataset.chance = values[index];
+      button.textContent = `${values[index]}%`;
+    });
+    $$('[data-chance-input]').forEach((input, index) => input.value = values[index]);
+    updateChance(state.chance);
+  }
+
+  function loadChancePresets() {
+    try {
+      const saved = JSON.parse(localStorage.getItem('dotaupChancePresets'));
+      if (Array.isArray(saved) && saved.length === 4 && saved.every(value => Number(value) >= 1 && Number(value) <= 95)) applyChancePresets(saved.map(Number));
+      else applyChancePresets(state.chancePresets);
+    } catch { applyChancePresets(state.chancePresets); }
+  }
+
   function runUpgrade() {
     if (state.spinning) return;
     if (!state.sourceIds.size || !state.targetId) return showToast('Выбери исходный и целевой предмет', 'error');
     state.spinning = true;
     $('#upgradeButton').disabled = true;
     $('#radarWrap').classList.remove('spinning');
+    $('#radarWrap').style.setProperty('--spin-duration', `${state.spinDuration}ms`);
     void $('#radarWrap').offsetWidth;
     $('#radarWrap').classList.add('spinning');
     $('#resultMessage').className = 'result-message';
@@ -162,7 +181,7 @@
       $('#upgradeButton').disabled = false;
       $('#radarWrap').classList.remove('spinning');
       $('#radarPointer').style.transform = `rotate(${roll * 3.6}deg)`;
-    }, 3000);
+    }, state.spinDuration);
   }
 
   let toastTimer;
@@ -208,6 +227,27 @@
     $$('[data-market-pane]').forEach(pane => pane.classList.toggle('active-mobile-market', pane.dataset.marketPane === button.dataset.marketTab));
   }));
   $$('.multiplier-row button').forEach(button => button.addEventListener('click', () => chooseTargetForChance(Number(button.dataset.chance))));
+  $$('.speed-switch button').forEach(button => button.addEventListener('click', () => {
+    state.spinDuration = button.dataset.speed === 'fast' ? 1000 : 4000;
+    $$('.speed-switch button').forEach(item => item.classList.toggle('active', item === button));
+    showToast(button.dataset.speed === 'fast' ? 'FAST-прокрутка: 1 секунда' : 'Обычная прокрутка: 4 секунды', 'success');
+  }));
+  $('#chanceSettingsButton').addEventListener('click', () => {
+    const editor = $('#chanceEditor');
+    const open = editor.classList.toggle('open');
+    editor.setAttribute('aria-hidden', String(!open));
+    $('#chanceSettingsButton').setAttribute('aria-expanded', String(open));
+  });
+  $('#saveChancePresets').addEventListener('click', () => {
+    const values = $$('[data-chance-input]').map(input => Number(input.value));
+    if (values.some(value => !Number.isFinite(value) || value < 1 || value > 95)) return showToast('Укажи проценты от 1 до 95', 'error');
+    applyChancePresets(values);
+    localStorage.setItem('dotaupChancePresets', JSON.stringify(values));
+    $('#chanceEditor').classList.remove('open');
+    $('#chanceEditor').setAttribute('aria-hidden', 'true');
+    $('#chanceSettingsButton').setAttribute('aria-expanded', 'false');
+    showToast('Кнопки процентов сохранены', 'success');
+  });
   $$('.mode-switch button').forEach(button => button.addEventListener('click', () => {
     state.mode = button.dataset.mode;
     $$('.mode-switch button').forEach(item => item.classList.toggle('active', item === button));
@@ -231,5 +271,5 @@
     else showToast('Промокод не найден', 'error');
   });
 
-  renderLive(); renderGrid(); renderSelection(); updateChance(state.chance);
+  loadChancePresets(); renderLive(); renderGrid(); renderSelection(); updateChance(state.chance);
 })();
