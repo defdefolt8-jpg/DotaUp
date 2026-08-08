@@ -690,8 +690,7 @@
   }));
   $('#sellAllButton').addEventListener('click', sellAllItems);
   $('#profileOpenButton').addEventListener('click', () => {
-    renderProfile();
-    openModal('profileModal');
+    window.top.location.href = '/profile';
   });
 
   $$('[data-modal-open]').forEach(button => button.addEventListener('click', () => openModal(button.dataset.modalOpen)));
