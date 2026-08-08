@@ -108,19 +108,39 @@
       </div>
     </section>
 
-    <section class="inventory-section" id="inventory">
-      <div class="inventory-head">
-        <div><span class="eyebrow">ITEM DATABASE</span><h2>Выбери предмет</h2></div>
-        <div class="inventory-tools">
-          <label class="search-box"><span aria-hidden="true">⌕</span><input id="itemSearch" type="search" placeholder="Поиск предмета…" autocomplete="off"></label>
-          <select id="rarityFilter" aria-label="Фильтр редкости"><option value="all">Все редкости</option><option value="consumer">Consumer</option><option value="classified">Classified</option><option value="covert">Covert</option></select>
-        </div>
+    <section class="inventory-section market-section" id="inventory">
+      <div class="market-mobile-tabs" role="tablist" aria-label="Каталоги предметов">
+        <button class="active" type="button" data-market-tab="source">Мой инвентарь</button>
+        <button type="button" data-market-tab="target">Выбрать скин</button>
       </div>
-      <div class="inventory-subnav">
-        <div class="inventory-type-tabs"><button class="active" type="button" data-grid-mode="source">Мой инвентарь</button><button type="button" data-grid-mode="target">Выбор скина</button></div>
-        <span id="itemsFound">8 предметов</span>
+
+      <div class="dual-market">
+        <section class="market-pane active-mobile-market" data-market-pane="source">
+          <div class="market-toolbar">
+            <div class="market-title"><span class="market-icon">▣</span><div><small>МОИ ПРЕДМЕТЫ</small><h2>Инвентарь</h2></div><b id="sourceItemsFound">0</b></div>
+            <div class="market-filters">
+              <label class="compact-search"><input id="sourceSearch" type="search" placeholder="Поиск" autocomplete="off"><span>⌕</span></label>
+              <label class="price-filter"><span>Цена от</span><input id="sourceMinPrice" type="number" min="0" placeholder="$0"></label>
+              <label class="price-filter"><span>до</span><input id="sourceMaxPrice" type="number" min="0" placeholder="∞"></label>
+            </div>
+          </div>
+          <div class="market-summary"><span>Выбери до 3 предметов</span><strong id="marketSourceTotal">$0.00</strong></div>
+          <div class="market-grid" id="sourceItemGrid"></div>
+        </section>
+
+        <section class="market-pane" data-market-pane="target">
+          <div class="market-toolbar">
+            <div class="market-title"><span class="market-icon upgrade-icon">◆</span><div><small>КАТАЛОГ НАГРАД</small><h2>Выбери скин</h2></div><b id="targetItemsFound">0</b></div>
+            <div class="market-filters">
+              <label class="compact-search"><input id="targetSearch" type="search" placeholder="Поиск" autocomplete="off"><span>⌕</span></label>
+              <label class="price-filter"><span>Цена от</span><input id="targetMinPrice" type="number" min="0" placeholder="$0"></label>
+              <label class="price-filter"><span>до</span><input id="targetMaxPrice" type="number" min="0" placeholder="∞"></label>
+            </div>
+          </div>
+          <div class="market-summary"><span>Доступные цели дороже выбранных предметов</span><strong id="marketTargetPrice">$0.00</strong></div>
+          <div class="market-grid" id="targetItemGrid"></div>
+        </section>
       </div>
-      <div class="item-grid" id="itemGrid"></div>
     </section>
   </main>
 

@@ -53,25 +53,34 @@
     $('#liveTrack').innerHTML = markup + markup;
   }
 
-  function renderGrid() {
-    const query = $('#itemSearch').value.trim().toLowerCase();
-    const rarity = $('#rarityFilter').value;
+  function renderMarket(mode) {
+    const prefix = mode === 'source' ? 'source' : 'target';
+    const query = $(`#${prefix}Search`).value.trim().toLowerCase();
+    const min = Number($(`#${prefix}MinPrice`).value) || 0;
+    const max = Number($(`#${prefix}MaxPrice`).value) || Infinity;
     const total = sourceTotal();
-    let visible = items.filter(item => {
+    const visible = items.filter(item => {
       const matchesText = `${item.weapon} ${item.skin}`.toLowerCase().includes(query);
-      const matchesRarity = rarity === 'all' || item.rarity === rarity;
-      const matchesMode = state.gridMode === 'source' || item.price > Math.max(total, 0);
-      return matchesText && matchesRarity && matchesMode;
+      const matchesPrice = item.price >= min && item.price <= max;
+      const matchesTarget = mode === 'source' || item.price > Math.max(total, 0);
+      return matchesText && matchesPrice && matchesTarget;
     });
-    $('#itemsFound').textContent = `${visible.length} ${visible.length === 1 ? 'предмет' : 'предметов'}`;
-    $('#itemGrid').innerHTML = visible.length ? visible.map(item => {
-      const selected = state.gridMode === 'source' ? state.sourceIds.has(item.id) : state.targetId === item.id;
-      return `<article class="item-card${selected ? ' selected' : ''}" style="--rarity:${item.color}" data-item-id="${item.id}">
+    $(`#${prefix}ItemsFound`).textContent = visible.length;
+    $(`#${prefix}ItemGrid`).innerHTML = visible.length ? visible.map(item => {
+      const selected = mode === 'source' ? state.sourceIds.has(item.id) : state.targetId === item.id;
+      return `<article class="item-card${selected ? ' selected' : ''}" style="--rarity:${item.color}" data-item-id="${item.id}" data-item-mode="${mode}">
         <div class="item-badges"><span class="wear">${item.wear}</span><i class="rarity-dot"></i></div>
         ${itemArt(item)}<span class="item-name">${item.weapon}</span><strong class="item-skin">${item.skin}</strong>
-        <div class="item-footer"><span class="item-price">${money(item.price)}</span><button class="select-item" type="button">${selected ? 'ВЫБРАНО' : 'ВЫБРАТЬ'}</button></div>
+        <div class="item-footer"><span class="item-price">${money(item.price)}</span><button class="select-item" type="button" aria-label="Выбрать ${item.skin}">${selected ? 'ВЫБРАНО' : 'ВЫБРАТЬ'}</button></div>
       </article>`;
-    }).join('') : '<div class="no-items">Ничего не найдено. Измени фильтр или поисковый запрос.</div>';
+    }).join('') : '<div class="no-items">По заданным параметрам предметов нет.</div>';
+  }
+
+  function renderGrid() {
+    renderMarket('source');
+    renderMarket('target');
+    $('#marketSourceTotal').textContent = money(sourceTotal());
+    $('#marketTargetPrice').textContent = state.targetId ? money(itemById(state.targetId).price) : '$0.00';
   }
 
   function selectedRow(item) {
@@ -92,8 +101,8 @@
     if (!state.spinning) $('#resultMessage').textContent = target && selected.length ? 'Терминал готов к запуску' : 'Выбери предметы для апгрейда';
   }
 
-  function selectItem(id) {
-    if (state.gridMode === 'source') {
+  function selectItem(mode, id) {
+    if (mode === 'source') {
       if (state.sourceIds.has(id)) state.sourceIds.delete(id);
       else if (state.sourceIds.size < 3) state.sourceIds.add(id);
       else return showToast('Можно выбрать не больше трёх предметов', 'error');
@@ -103,12 +112,6 @@
       state.targetId = id;
     }
     renderSelection(); renderGrid();
-  }
-
-  function setGridMode(mode) {
-    state.gridMode = mode;
-    $$('.inventory-type-tabs button').forEach(button => button.classList.toggle('active', button.dataset.gridMode === mode));
-    renderGrid();
   }
 
   function updateChance(value) {
@@ -167,12 +170,14 @@
     document.body.style.overflow = '';
   }
 
-  $('#itemGrid').addEventListener('click', event => {
-    const card = event.target.closest('.item-card');
-    if (card) selectItem(Number(card.dataset.itemId));
+  ['sourceItemGrid', 'targetItemGrid'].forEach(gridId => {
+    $(`#${gridId}`).addEventListener('click', event => {
+      const card = event.target.closest('.item-card');
+      if (card) selectItem(card.dataset.itemMode, Number(card.dataset.itemId));
+    });
   });
-  $('#itemSearch').addEventListener('input', renderGrid);
-  $('#rarityFilter').addEventListener('change', renderGrid);
+  ['sourceSearch', 'sourceMinPrice', 'sourceMaxPrice', 'targetSearch', 'targetMinPrice', 'targetMaxPrice']
+    .forEach(id => $(`#${id}`).addEventListener('input', renderGrid));
   $('#chanceSlider').addEventListener('input', event => updateChance(event.target.value));
   $('#upgradeButton').addEventListener('click', runUpgrade);
   $('#clearSelection').addEventListener('click', () => { state.sourceIds.clear(); renderSelection(); renderGrid(); });
@@ -182,7 +187,10 @@
     state.targetId = candidates[Math.floor(Math.random() * candidates.length)].id;
     renderSelection(); renderGrid();
   });
-  $$('.inventory-type-tabs button').forEach(button => button.addEventListener('click', () => setGridMode(button.dataset.gridMode)));
+  $$('.market-mobile-tabs button').forEach(button => button.addEventListener('click', () => {
+    $$('.market-mobile-tabs button').forEach(item => item.classList.toggle('active', item === button));
+    $$('[data-market-pane]').forEach(pane => pane.classList.toggle('active-mobile-market', pane.dataset.marketPane === button.dataset.marketTab));
+  }));
   $$('.multiplier-row button').forEach(button => button.addEventListener('click', () => {
     state.multiplier = Number(button.dataset.multiplier);
     $$('.multiplier-row button').forEach(item => item.classList.toggle('active', item === button));
