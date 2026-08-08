@@ -70,8 +70,10 @@ test("uses real Steam OpenID routes instead of demo-only auth", async () => {
   assert.match(worker, /dotaup_steam_session/);
   assert.match(worker, /avatar_url/);
   assert.match(worker, /steamcommunity\.com\/profiles/);
+  assert.match(worker, /steam_auth/);
   assert.match(script, /\/api\/auth\/me/);
   assert.match(script, /syncSteamAvatars/);
+  assert.match(script, /hydrateSteamSessionAfterReturn/);
   assert.match(script, /\/api\/auth\/steam\/login\?return_to=\//);
   assert.doesNotMatch(script, /dotaupSteamLoggedIn/);
   assert.match(index, /id="steamLoginButton"/);

@@ -301,6 +301,37 @@
     renderProfile();
   }
 
+  async function hydrateSteamSessionAfterReturn() {
+    const params = new URLSearchParams(window.location.search);
+    const authError = params.get('auth_error');
+    const justReturned = params.get('steam_auth') === 'ok';
+
+    if (authError) {
+      showToast('Steam login failed. Try again from the browser, not inside the Steam app.', 'error');
+      window.history.replaceState({}, '', window.location.pathname);
+      return hydrateSteamSession();
+    }
+
+    if (!justReturned) return hydrateSteamSession();
+
+    const buttonLabel = $('#steamLoginButton span');
+    if (buttonLabel) buttonLabel.textContent = 'Проверяем Steam...';
+
+    for (let attempt = 0; attempt < 5; attempt += 1) {
+      await hydrateSteamSession();
+      if (state.isLoggedIn) {
+        showToast('Steam подключен', 'success');
+        window.history.replaceState({}, '', window.location.pathname);
+        return;
+      }
+      await new Promise(resolve => setTimeout(resolve, 450));
+    }
+
+    if (buttonLabel) buttonLabel.textContent = 'Войти через Steam';
+    showToast('Steam не вернул сессию. Открой сайт в обычном браузере и попробуй ещё раз.', 'error');
+    window.history.replaceState({}, '', window.location.pathname);
+  }
+
   function renderSelection() {
     const selected = [...state.sourceIds].map(itemById);
     $('#selectedSources').innerHTML = selected.length
@@ -817,6 +848,6 @@
   renderProfile();
   updateChance(state.chance);
   hydrateMarketPrices();
-  hydrateSteamSession();
+  hydrateSteamSessionAfterReturn();
 })();
 

@@ -155,7 +155,7 @@ function startSteamLogin(request: Request): Response {
 async function finishSteamLogin(request: Request, env: Env): Promise<Response> {
   const url = new URL(request.url);
   const returnTo = safeReturnTo(url.searchParams.get("return_to"));
-  const claimedId = url.searchParams.get("openid.claimed_id") ?? "";
+  const claimedId = url.searchParams.get("openid.claimed_id") ?? url.searchParams.get("openid.identity") ?? "";
   const steamId = extractSteamId(claimedId);
 
   if (!steamId) {
@@ -173,7 +173,7 @@ async function finishSteamLogin(request: Request, env: Env): Promise<Response> {
   return new Response(null, {
     status: 302,
     headers: {
-      location: returnTo,
+      location: withAuthStatus(returnTo, "ok"),
       "set-cookie": await createSteamSessionCookie(env, profile),
     },
   });
@@ -188,6 +188,12 @@ function authError(returnTo: string, reason: string): Response {
       location: `${target.pathname}${target.search}${target.hash}`,
     },
   });
+}
+
+function withAuthStatus(returnTo: string, status: string): string {
+  const target = new URL(returnTo, "https://dotaup.local");
+  target.searchParams.set("steam_auth", status);
+  return `${target.pathname}${target.search}${target.hash}`;
 }
 
 async function verifySteamOpenId(callbackUrl: URL): Promise<boolean> {
@@ -213,7 +219,7 @@ async function verifySteamOpenId(callbackUrl: URL): Promise<boolean> {
 }
 
 function extractSteamId(claimedId: string): string | null {
-  const match = claimedId.match(/steamcommunity\.com\/openid\/id\/(\d{15,25})$/);
+  const match = claimedId.match(/steamcommunity\.com\/openid\/id\/(\d{15,25})(?:\/)?(?:[?#].*)?$/i);
   return match?.[1] ?? null;
 }
 
