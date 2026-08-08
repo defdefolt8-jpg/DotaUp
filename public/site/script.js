@@ -110,7 +110,6 @@
   const $ = (selector, root = document) => root.querySelector(selector);
   const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
   const steamLoginUrl = `/api/auth/steam/login?return_to=${encodeURIComponent('/auth/steam/complete')}`;
-  const steamLogoutUrl = '/api/auth/logout?return_to=/';
   const profileStateKey = 'dotaupProfileState';
   const money = value => `${Math.round(value).toLocaleString('ru-RU')} COIN`;
   const itemById = id => items.find(item => item.id === Number(id));
@@ -217,7 +216,7 @@
       } else {
         setMarketSyncStatus(`Steam Market: цены синхронизированы · ${syncLabel}`, 'ok');
       }
-    } catch (error) {
+    } catch {
       setMarketSyncStatus('Steam Market: недоступен, показаны сохранённые цены', 'warn');
     }
   }
@@ -642,8 +641,10 @@
     $('#profileMarketState').textContent = `Готово к продаже: ${inventoryCount}`;
     $('#profileUpgradeCount').textContent = String(state.gameHistory.length);
     $('#profileWinRate').textContent = `Winrate: ${winRate}%`;
-    $('#profileBestDropValue').textContent = money(bestWonPrice);
-    $('#profileBestDropName').textContent = bestWonItem ? bestWonItem.skin : 'Пока без выигрышей';
+    const bestDropValue = $('#profileBestDropValue');
+    const bestDropName = $('#profileBestDropName');
+    if (bestDropValue) bestDropValue.textContent = money(bestWonPrice);
+    if (bestDropName) bestDropName.textContent = bestWonItem ? bestWonItem.skin : 'Пока без выигрышей';
     const bestDrop = itemById(state.user.bestDropId);
     if (soldValue) soldValue.textContent = money(0);
     if (bestDrop) {

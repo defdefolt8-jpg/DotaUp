@@ -80,3 +80,14 @@ test("uses real Steam OpenID routes instead of demo-only auth", async () => {
   assert.match(index, /id="steamLoginButton"/);
   assert.doesNotMatch(index, /class="steam-button" type="button" data-modal-open/);
 });
+
+test("auth hydration survives optional legacy profile elements", async () => {
+  const script = await readFile(new URL("../public/site/script.js", import.meta.url), "utf8");
+  const html = await readFile(new URL("../public/site/index.html", import.meta.url), "utf8");
+
+  assert.doesNotMatch(html, /id="profileBestDropValue"/);
+  assert.match(script, /if \(bestDropValue\) bestDropValue\.textContent/);
+  assert.match(script, /if \(bestDropName\) bestDropName\.textContent/);
+  assert.match(script, /hydrateSteamSessionAfterReturn\(\)/);
+  assert.match(script, /fetch\('\/api\/auth\/me', \{ credentials: 'include', cache: 'no-store' \}\)/);
+});
