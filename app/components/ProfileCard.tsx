@@ -29,7 +29,7 @@ export function ProfileCard(props: ProfileCardProps) {
   } = props;
 
   return (
-    <section className="rounded-[28px] border border-white/7 bg-[#101319] p-3 shadow-[0_30px_80px_rgba(0,0,0,0.35)] sm:p-4 lg:p-5">
+    <section className="rounded-[22px] border border-[#242a35] bg-[#101319] p-3 shadow-[0_30px_80px_rgba(0,0,0,0.35)] sm:p-4 lg:p-5">
       <div className="grid gap-4 xl:grid-cols-[1.08fr_0.96fr_0.78fr]">
         <UserInfo
           profile={profile}

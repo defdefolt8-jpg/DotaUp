@@ -1,6 +1,6 @@
 "use client";
 
-import { Boxes, History, ArrowUpCircle } from "lucide-react";
+import { ArrowUpCircle, Boxes, History } from "lucide-react";
 import { InventoryEmptyState } from "./InventoryEmptyState";
 import type { ProfileTab } from "./types";
 
@@ -24,7 +24,7 @@ export function ProfileTabs({
   onToggleSelling,
 }: ProfileTabsProps) {
   return (
-    <section className="rounded-[24px] border border-white/7 bg-[#101319] p-4 shadow-[0_30px_80px_rgba(0,0,0,0.25)]">
+    <section className="rounded-[22px] border border-[#242a35] bg-[#101319] p-4 shadow-[0_30px_80px_rgba(0,0,0,0.25)]">
       <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
         <div className="flex flex-wrap gap-3">
           {tabs.map(({ id, label, icon: Icon }) => {
@@ -35,10 +35,10 @@ export function ProfileTabs({
                 key={id}
                 type="button"
                 onClick={() => onTabChange(id)}
-                className={`inline-flex h-13 items-center gap-2 rounded-[16px] border px-5 text-sm font-semibold transition ${
+                className={`inline-flex h-13 items-center gap-2 rounded-xl border px-5 text-sm font-black transition ${
                   isActive
-                    ? "border-yellow-300 bg-yellow-400 text-[#161101]"
-                    : "border-white/8 bg-white/[0.03] text-zinc-300 hover:border-yellow-400/25 hover:text-white"
+                    ? "border-[#8dfc52] bg-[#8dfc52] text-[#10200c]"
+                    : "border-[#313744] bg-[#141820] text-zinc-300 hover:border-[#8dfc52]/40 hover:text-[#8dfc52]"
                 }`}
               >
                 <Icon className="h-4 w-4" />
@@ -52,12 +52,12 @@ export function ProfileTabs({
           <button
             type="button"
             onClick={onToggleSelling}
-            className="flex items-center justify-between gap-4 rounded-[16px] border border-white/8 bg-white/[0.03] px-4 py-3 text-sm text-zinc-300 transition hover:border-yellow-400/20 hover:text-white sm:min-w-[260px]"
+            className="flex items-center justify-between gap-4 rounded-xl border border-[#313744] bg-[#141820] px-4 py-3 text-sm text-zinc-300 transition hover:border-[#8dfc52]/40 hover:text-[#8dfc52] sm:min-w-[260px]"
           >
             <span>Доступно для продажи</span>
             <span
               className={`relative block h-7 w-12 rounded-full transition ${
-                sellingEnabled ? "bg-yellow-400" : "bg-white/10"
+                sellingEnabled ? "bg-[#8dfc52]" : "bg-white/10"
               }`}
             >
               <span
@@ -70,7 +70,7 @@ export function ProfileTabs({
 
           <button
             type="button"
-            className="h-13 rounded-[16px] border border-white/10 bg-white/[0.03] px-6 text-sm font-semibold text-zinc-200 transition hover:border-yellow-400/25 hover:text-white"
+            className="h-13 rounded-xl border border-[#313744] bg-[#141820] px-6 text-sm font-black text-zinc-200 transition hover:border-[#8dfc52]/40 hover:text-[#8dfc52]"
           >
             Продать все
           </button>
@@ -81,13 +81,13 @@ export function ProfileTabs({
         {activeTab === "inventory" && <InventoryEmptyState />}
 
         {activeTab === "items" && (
-          <div className="rounded-[22px] border border-white/8 bg-white/[0.02] p-6 text-zinc-400">
+          <div className="rounded-2xl border border-[#313744] bg-white/[0.02] p-6 text-zinc-400">
             История предметов пока пуста.
           </div>
         )}
 
         {activeTab === "games" && (
-          <div className="rounded-[22px] border border-white/8 bg-white/[0.02] p-6 text-zinc-400">
+          <div className="rounded-2xl border border-[#313744] bg-white/[0.02] p-6 text-zinc-400">
             История игр появится после первых апгрейдов.
           </div>
         )}

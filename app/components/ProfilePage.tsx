@@ -8,7 +8,7 @@ import { ProfileTabs } from "./ProfileTabs";
 import type { ProfileData, ProfileTab } from "./types";
 
 const mockProfile: ProfileData = {
-  nickname: "PlayerName",
+  nickname: "DemoInvoker",
   id: "601977",
   balance: 0.94,
   withdrawnItems: 0,
@@ -42,14 +42,14 @@ export function ProfilePage() {
   };
 
   const handleTopUp = () => {
-    window.alert("Открыть сценарий пополнения баланса.");
+    window.alert("Открыть пополнение баланса.");
   };
 
   return (
-    <div className="min-h-screen bg-[#0b0d12] text-white">
+    <div className="min-h-screen bg-[#0d0e12] text-white">
       <Header balance={profile.balance} onTopUp={handleTopUp} />
 
-      <main className="mx-auto flex w-full max-w-[1680px] flex-col gap-6 px-4 py-6 sm:px-6 lg:px-10 lg:py-8">
+      <main className="mx-auto flex w-full max-w-[1550px] flex-col gap-6 px-4 py-6 sm:px-6 lg:px-10 lg:py-8">
         <ProfileCard
           profile={profile}
           pushEnabled={pushEnabled}

@@ -33,7 +33,7 @@ test("server-renders the main site frame", async () => {
   assert.match(html, /site-frame/);
 });
 
-test("uses component-based profile implementation", async () => {
+test("keeps profile route component-based and branded", async () => {
   const [page, layout, packageJson, profilePage, profileCard, header, footer] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
@@ -51,7 +51,8 @@ test("uses component-based profile implementation", async () => {
   assert.match(profileCard, /UserInfo/);
   assert.match(profileCard, /BalanceCard/);
   assert.match(profileCard, /StatsCard/);
-  assert.match(header, /Пополнить/);
+  assert.match(header, /DOTA/);
+  assert.match(header, /href="\/"/);
   assert.match(footer, /Поддержка/);
-  assert.match(layout, /Arena Hub/);
+  assert.match(layout, /DotaUp/);
 });
