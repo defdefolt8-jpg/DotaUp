@@ -57,3 +57,103 @@ main{max-width:1550px;margin:auto}.upgrade-section{padding:42px clamp(18px,4vw,6
 .item-poster-top{font-size:7px;letter-spacing:.14em;text-transform:uppercase;color:#dce5f0;opacity:.78}
 .item-poster-symbol{margin-top:auto;font-size:18px;font-weight:900;letter-spacing:-.04em;color:#fff;text-shadow:0 6px 16px rgba(0,0,0,.34)}
 .item-poster-bottom{margin-top:4px;font-size:7px;line-height:1.2;color:#bfc7d4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+
+/* mobile app-like layout */
+@media (max-width: 620px){
+  body{background:linear-gradient(180deg,#0b0d12 0%,#10131a 100%)}
+  .site-header{position:sticky;top:0;z-index:40;padding:10px 12px;min-height:64px;border-bottom:1px solid rgba(255,255,255,.05);background:rgba(10,12,16,.94)}
+  .brand{gap:10px}
+  .brand strong{font-size:17px}
+  .header-actions{gap:6px;align-items:center}
+  .header-balance{display:flex;gap:6px}
+  .balance-pill{height:34px;min-width:auto;padding:0 10px;border-radius:10px}
+  .balance-pill-wide{min-width:112px}
+  .balance-pill span{font-size:7px}
+  .balance-pill strong{font-size:11px}
+  .steam-button,.profile-chip{height:34px}
+  .profile-chip{width:34px}
+  .profile-avatar{width:24px;height:24px;font-size:9px}
+
+  .live-strip{height:52px;border-bottom:0;background:transparent;padding:0 12px 8px}
+  .live-label{display:none}
+  .live-viewport{border:1px solid rgba(255,255,255,.06);border-radius:12px;background:#11151c}
+  .live-event{width:176px;padding:8px 10px}
+  .mini-item{width:34px;height:34px}
+  .live-avatar{width:22px;height:22px;font-size:8px}
+  .live-info strong{font-size:9px}
+  .live-info small{font-size:8px}
+
+  main{padding-bottom:24px}
+  .upgrade-section{padding:0 12px 16px}
+  .mobile-tabs,.market-mobile-tabs{position:sticky;top:74px;z-index:25;margin:0 0 10px;border:1px solid rgba(255,255,255,.06);background:rgba(17,21,28,.95);backdrop-filter:blur(12px)}
+  .mobile-tabs button,.market-mobile-tabs button{height:38px;font-size:9px}
+  .upgrade-workspace{display:grid;grid-template-columns:1fr;gap:10px;background:none;border:0;box-shadow:none;min-height:0;overflow:visible}
+  .upgrade-core,.selection-panel,.market-pane{border:1px solid rgba(255,255,255,.07);border-radius:16px;background:linear-gradient(145deg,#141922,#10141b);box-shadow:0 18px 34px rgba(0,0,0,.24)}
+  .upgrade-core{padding:16px 14px 18px;order:1}
+  .selection-panel{display:none;padding:16px 14px;min-height:auto}
+  .selection-panel.active-mobile{display:flex;order:2}
+  .selection-panel.source-panel,.selection-panel.target-panel{border-right:1px solid rgba(255,255,255,.07);border-left:1px solid rgba(255,255,255,.07)}
+  .panel-title{margin-bottom:4px}
+  .panel-title h2{font-size:13px}
+  .selected-items{min-height:132px;padding:10px 0 0}
+  .selected-row{height:60px;grid-template-columns:50px 1fr auto;padding:6px}
+  .selected-row .item-art{height:46px}
+  .panel-total{height:40px;margin-top:8px}
+  .panel-total strong{font-size:14px}
+  .empty-state{padding:10px 0}
+  .plus-ring{width:58px;height:58px;font-size:20px}
+  .empty-state strong{font-size:12px;margin-top:10px}
+
+  .speed-switch-top{max-width:none;margin-bottom:12px}
+  .speed-switch-top button{height:30px;font-size:8px}
+  .radar-wrap{width:188px}
+  .chance-value strong{font-size:30px}
+  .result-message{height:auto;min-height:24px;text-align:center;justify-content:center;margin-top:8px}
+  .upgrade-button{height:54px;border-radius:12px}
+  .upgrade-button b{font-size:14px}
+  .mode-switch{margin-top:12px;width:100%;max-width:180px}
+  .chance-control{max-width:none;margin-top:14px}
+  .auto-chance-head{display:block;text-align:center}
+  .auto-chance-head small{display:block;margin-top:4px}
+  .multiplier-row button{height:32px;font-size:9px}
+  .chance-editor-inputs label{height:32px}
+
+  .inventory-section{padding:0 12px 18px;border-top:0;background:none}
+  .dual-market{display:block;border:0;background:none;box-shadow:none}
+  .market-pane{display:none;padding:12px}
+  .market-pane.active-mobile-market{display:block}
+  .market-pane + .market-pane{border-left:1px solid rgba(255,255,255,.07)}
+  .market-toolbar{min-height:auto;border-bottom:0}
+  .market-title{margin-bottom:10px}
+  .market-title h2{font-size:13px}
+  .market-title>b{height:20px;font-size:8px}
+  .market-icon{width:32px;height:32px;font-size:14px}
+  .market-filters{grid-template-columns:1fr 72px 72px;gap:5px}
+  .compact-search,.price-filter{height:32px}
+  .compact-search input,.price-filter input{font-size:8px}
+  .market-summary{height:auto;margin:8px 0 10px;align-items:center}
+  .market-summary strong{font-size:10px}
+  .purchase-cart-button{height:30px;font-size:8px}
+  .market-empty-note{font-size:8px;padding:9px 10px}
+  .market-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;max-height:none;padding:0}
+  .market-grid .item-card{height:190px;border-radius:12px;padding:8px}
+  .market-grid .item-art{height:84px}
+  .market-grid .item-name{font-size:8px}
+  .market-grid .item-skin{font-size:10px;white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+  .market-grid .item-price{font-size:11px}
+  .cart-corner{top:7px;right:7px;width:24px;height:24px}
+
+  .profile-modal{padding:14px}
+  .profile-shell{gap:12px}
+  .profile-top{grid-template-columns:1fr}
+  .profile-user-card,.profile-balance-card,.profile-best-drop,.profile-stat-card,.profile-panel{padding:16px;border-radius:16px}
+  .profile-user-card strong{font-size:21px}
+  .profile-balance-card strong{font-size:30px}
+  .profile-tabs button,.profile-secondary,.profile-danger{height:40px;padding:0 14px;font-size:11px}
+  .profile-grid,.history-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .profile-item-card,.profile-history-card{min-height:210px}
+  .profile-game-row{padding:12px}
+
+  .site-footer{padding:20px 12px 28px;background:transparent}
+  .footer-links{gap:10px}
+}
