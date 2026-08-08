@@ -176,24 +176,25 @@ main{max-width:1550px;margin:auto}.upgrade-section{padding:42px clamp(18px,4vw,6
 .profile-nav-card button{height:48px;border:1px solid #313744;border-radius:14px;background:#171b22;color:#c7ced8;font-size:13px;font-weight:800;text-align:left;padding:0 16px}
 .profile-nav-card button.active{background:linear-gradient(135deg,#f3e23f,#ffcf66);color:#191507;border-color:#f3e23f;box-shadow:0 12px 28px rgba(243,226,63,.15)}
 .profile-main{display:grid;gap:18px}
-.profile-overview-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.profile-overview-grid{display:grid;grid-template-columns:1.2fr repeat(3,minmax(0,1fr));gap:14px}
 .profile-overview-card{padding:20px}
 .profile-overview-card span{display:block;color:#8d95a4;font-size:12px}
 .profile-overview-card small{display:block;margin-top:10px;color:#adb5c1;font-size:11px}
 .profile-balance-card strong{font-size:46px;line-height:1}
 .profile-stat-card strong{font-size:30px;color:#ffd54a;margin-top:12px}
-.profile-highlight-row{display:grid;grid-template-columns:1.1fr .9fr;gap:14px}
+.profile-highlight-row{display:grid;grid-template-columns:.95fr 1.05fr;gap:14px}
 .profile-best-drop,.profile-activity-card,.profile-panel{padding:20px}
-.profile-drop-card{grid-template-columns:140px 1fr;gap:18px}
-.profile-drop-card .item-art{height:118px;border-radius:16px}
-.profile-drop-card strong{font-size:21px}
-.profile-drop-card b{font-size:26px}
+.profile-drop-card{grid-template-columns:112px 1fr;gap:14px}
+.profile-drop-card .item-art{height:92px;border-radius:14px}
+.profile-drop-card strong{font-size:18px}
+.profile-drop-card b{font-size:22px}
 .profile-activity-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .profile-activity-tile.accent{background:linear-gradient(145deg,rgba(141,252,82,.08),rgba(56,242,208,.05));border-color:rgba(141,252,82,.18)}
 .profile-activity-tile.accent strong{color:var(--green)}
-.profile-tabs-row{padding:0;display:flex;justify-content:flex-end;gap:12px;align-items:center}
+.profile-topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:0 2px}
+.profile-topbar-title strong{display:block;font-size:24px;line-height:1}
+.profile-topbar-title span{display:block;margin-top:6px;color:#8f97a6;font-size:12px}
 .profile-tabs{display:flex;gap:8px;flex-wrap:wrap}
-.profile-mobile-tabs{display:none}
 .profile-tabs button,.profile-secondary,.profile-danger{height:46px;border-radius:14px}
 .profile-secondary{background:#171c24}
 .profile-panel{padding:18px}
@@ -207,4 +208,4 @@ main{max-width:1550px;margin:auto}.upgrade-section{padding:42px clamp(18px,4vw,6
 .profile-modal .modal-close{top:16px;right:16px;z-index:30;width:38px;height:38px;border-radius:50%;background:rgba(10,12,16,.92);border:1px solid #39404d;display:grid;place-items:center;color:#c9d0da;font-size:24px;line-height:1}
 .profile-modal .modal-close:hover{border-color:#586274;color:#fff}
 @media(max-width:1180px){.profile-hero{grid-template-columns:1fr}.profile-overview-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.profile-highlight-row{grid-template-columns:1fr}.profile-grid,.history-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media(max-width:760px){.profile-modal{padding:14px}.profile-overview-grid{grid-template-columns:1fr}.profile-activity-grid,.profile-mini-grid{grid-template-columns:1fr 1fr}.profile-grid,.history-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.profile-tabs-row{display:flex;flex-direction:column;align-items:stretch}.profile-mobile-tabs{display:flex}.profile-tools{margin-top:0;display:grid}.profile-balance-card strong{font-size:34px}.profile-user-card strong{font-size:24px}.profile-game-row{grid-template-columns:1fr}.profile-nav-card{display:none}.profile-modal .modal-close{top:12px;right:12px;width:34px;height:34px;font-size:20px}}
+@media(max-width:760px){.profile-modal{padding:14px}.profile-overview-grid{grid-template-columns:1fr}.profile-activity-grid,.profile-mini-grid{grid-template-columns:1fr 1fr}.profile-grid,.history-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.profile-topbar{display:block}.profile-tools{margin-top:10px;display:grid}.profile-balance-card strong{font-size:34px}.profile-user-card strong{font-size:24px}.profile-game-row{grid-template-columns:1fr}.profile-nav-card{display:none}.profile-modal .modal-close{top:12px;right:12px;width:34px;height:34px;font-size:20px}}

@@ -562,6 +562,15 @@
   function renderProfile() {
     renderProfileInventory();
     renderProfileHistory();
+    const currentSection = {
+      inventory: ['Инвентарь', 'Все предметы аккаунта'],
+      items: ['История предметов', 'Последние выигранные и купленные предметы'],
+      games: ['История игр', 'Все апгрейды, шансы и результаты'],
+    }[state.profileTab] || ['Профиль', ''];
+    const currentSectionNode = $('#profileCurrentSection');
+    const currentHintNode = $('#profileCurrentHint');
+    if (currentSectionNode) currentSectionNode.textContent = currentSection[0];
+    if (currentHintNode) currentHintNode.textContent = currentSection[1];
     $$('[data-profile-tab]').forEach(button => button.classList.toggle('active', button.dataset.profileTab === state.profileTab));
     $$('[data-profile-panel]').forEach(panel => panel.hidden = panel.dataset.profilePanel !== state.profileTab);
     updateBalance();
