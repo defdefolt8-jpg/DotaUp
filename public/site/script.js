@@ -2,26 +2,36 @@
   'use strict';
 
   const items = [
-    { id: 1, weapon: 'Treasure', skin: 'Frostivus 2023 Treasure Chest', wear: 'Base', price: 0.06, color: '#47c8ff', shape: 'shield', imageLabel: 'Frostivus', imageAccent: '#47c8ff' },
-    { id: 2, weapon: 'Treasure', skin: 'Dead Reckoning Chest', wear: 'Base', price: 0.29, color: '#57d3ff', shape: 'crown', imageLabel: 'Reckoning', imageAccent: '#57d3ff' },
-    { id: 3, weapon: 'Collector Cache', skin: 'Spina Infernalis', wear: 'Base', price: 0.22, color: '#7f8fff', shape: 'axe', imageLabel: 'Inferno', imageAccent: '#7f8fff' },
-    { id: 4, weapon: 'World Item', skin: 'Crownfall - Dire Creeps', wear: 'Base', price: 0.63, color: '#ff7a59', shape: 'daggers', imageLabel: 'Dire', imageAccent: '#ff7a59' },
-    { id: 5, weapon: 'World Item', skin: 'Crownfall - Radiant Creeps', wear: 'Base', price: 0.87, color: '#8dfc52', shape: 'wings', imageLabel: 'Radiant', imageAccent: '#8dfc52' },
-    { id: 6, weapon: 'Immortal', skin: 'Immortal Treasure I 2022', wear: 'Base', price: 1.3, color: '#8dfc52', shape: 'crown', imageLabel: 'Immortal', imageAccent: '#8dfc52' },
-    { id: 7, weapon: 'Terrain', skin: 'Stoneclaw Scavengers Dire Towers', wear: 'Base', price: 1.76, color: '#ff8a38', shape: 'hammer', imageLabel: 'Dire', imageAccent: '#ff8a38' },
-    { id: 8, weapon: 'Terrain', skin: 'Stoneclaw Scavengers Radiant Towers', wear: 'Base', price: 1.77, color: '#6dffb7', shape: 'staff', imageLabel: 'Radiant', imageAccent: '#6dffb7' },
-    { id: 9, weapon: 'Anti-Mage', skin: 'Mantle of the Whispered Bond', wear: 'Base', price: 2.09, color: '#8c74ff', shape: 'blade', imageLabel: 'AM', imageAccent: '#8c74ff' },
-    { id: 10, weapon: 'Invoker', skin: 'Magus Apex', wear: 'Arcana', price: 2.95, color: '#a878ff', shape: 'staff', imageLabel: 'Invoker', imageAccent: '#a878ff' },
-    { id: 11, weapon: 'Rubick', skin: 'Crux of Perplex', wear: 'Immortal', price: 5.0, color: '#58f4c8', shape: 'staff', imageLabel: 'Rubick', imageAccent: '#58f4c8' },
-    { id: 12, weapon: 'Shadow Fiend', skin: 'Arms of Desolation', wear: 'Immortal', price: 8.97, color: '#ff5576', shape: 'axe', imageLabel: 'SF', imageAccent: '#ff5576' },
-    { id: 13, weapon: 'Juggernaut', skin: 'Origins of Faith', wear: 'Immortal', price: 11.55, color: '#ffd36b', shape: 'blade', imageLabel: 'Jugg', imageAccent: '#ffd36b' },
-    { id: 14, weapon: 'Dragon Knight', skin: 'The Devotions of Dragonus - Wings', wear: 'Mythical', price: 18.47, color: '#ff8c5a', shape: 'wings', imageLabel: 'DK', imageAccent: '#ff8c5a' },
-    { id: 15, weapon: 'Phantom Assassin', skin: 'Manifold Paradox', wear: 'Arcana', price: 24.24, color: '#48bfff', shape: 'daggers', imageLabel: 'PA', imageAccent: '#48bfff', image: 'https://community.akamai.steamstatic.com/economy/image/QifztM4jTRrENf7LQ1M1h6-lJfGtuM8UIgRHVY7WmQExQUo-lCe3QG6XYvO_3pD5UI5hUlQ7nF8U5uoD2Ublfqh8f7ug3lWm5RDc4YUwjdCioFBmsXoo_W5n3P4w7KzVY-lFuA/330x192' },
-    { id: 16, weapon: 'Shadow Fiend', skin: 'Demon Eater', wear: 'Arcana', price: 25.55, color: '#ff5576', shape: 'axe', imageLabel: 'SF', imageAccent: '#ff5576', image: 'https://community.akamai.steamstatic.com/economy/image/IEkBqta5z6iokJzddPtiRd7IO7aI38FE6fZEu_uFfMYVVnq1DaK5QAL6XYb0m5muNt2fygcdwISuB6JSsDI2ap-nP7nQ2Efk6s2SyHCbaV6eQaKnBww5-pI9stirIQ/330x192' },
-    { id: 17, weapon: 'Juggernaut', skin: 'Exalted Bladeform Legacy', wear: 'Arcana', price: 26.45, color: '#ffcf66', shape: 'blade', imageLabel: 'Jugg', imageAccent: '#ffcf66' },
-    { id: 18, weapon: 'Terrorblade', skin: 'Fractal Horns of Inner Abysm', wear: 'Arcana', price: 34.97, color: '#7cf2ff', shape: 'crown', imageLabel: 'TB', imageAccent: '#7cf2ff' },
-    { id: 19, weapon: 'Invoker', skin: 'Dark Artistry Cape', wear: 'Mythical', price: 194.95, color: '#9c6cff', shape: 'wings', imageLabel: 'Invoker', imageAccent: '#9c6cff', image: 'https://community.akamai.steamstatic.com/economy/image/UgG2rj5Qw1PtF4AZbx8n8Y5m3JZbJX64FdL1dQc6Y0nNh0s9cMNdH3GgloJrRzQ2S-vKVl02QG7Wm3SeQp0d8Q/330x192' },
-    { id: 20, weapon: 'Pudge', skin: 'Dragonclaw Hook', wear: 'Legendary', price: 351.95, color: '#ff7a59', shape: 'hook', imageLabel: 'Pudge', imageAccent: '#ff7a59' }
+    { id: 1, weapon: 'Treasure', skin: 'Frostivus 2023 Treasure Chest', wear: 'Base', price: 6, color: '#47c8ff', shape: 'shield', imageLabel: 'Frostivus', imageAccent: '#47c8ff' },
+    { id: 2, weapon: 'Treasure', skin: 'Dead Reckoning Chest', wear: 'Base', price: 23, color: '#57d3ff', shape: 'crown', imageLabel: 'Reckoning', imageAccent: '#57d3ff' },
+    { id: 3, weapon: 'Collector Cache', skin: 'Spina Infernalis', wear: 'Base', price: 17, color: '#7f8fff', shape: 'axe', imageLabel: 'Inferno', imageAccent: '#7f8fff' },
+    { id: 4, weapon: 'World Item', skin: 'Crownfall - Dire Creeps', wear: 'Base', price: 50, color: '#ff7a59', shape: 'daggers', imageLabel: 'Dire', imageAccent: '#ff7a59' },
+    { id: 5, weapon: 'World Item', skin: 'Crownfall - Radiant Creeps', wear: 'Base', price: 69, color: '#8dfc52', shape: 'wings', imageLabel: 'Radiant', imageAccent: '#8dfc52' },
+    { id: 6, weapon: 'Immortal', skin: 'Immortal Treasure I 2022', wear: 'Base', price: 103, color: '#8dfc52', shape: 'crown', imageLabel: 'Immortal', imageAccent: '#8dfc52' },
+    { id: 7, weapon: 'Terrain', skin: 'Stoneclaw Scavengers Dire Towers', wear: 'Base', price: 140, color: '#ff8a38', shape: 'hammer', imageLabel: 'Dire', imageAccent: '#ff8a38' },
+    { id: 8, weapon: 'Terrain', skin: 'Stoneclaw Scavengers Radiant Towers', wear: 'Base', price: 141, color: '#6dffb7', shape: 'staff', imageLabel: 'Radiant', imageAccent: '#6dffb7' },
+    { id: 9, weapon: 'Anti-Mage', skin: 'Mantle of the Whispered Bond', wear: 'Base', price: 166, color: '#8c74ff', shape: 'blade', imageLabel: 'AM', imageAccent: '#8c74ff' },
+    { id: 10, weapon: 'Invoker', skin: 'Magus Apex', wear: 'Arcana', price: 234, color: '#a878ff', shape: 'staff', imageLabel: 'Invoker', imageAccent: '#a878ff' },
+    { id: 11, weapon: 'Rubick', skin: 'Crux of Perplex', wear: 'Immortal', price: 397, color: '#58f4c8', shape: 'staff', imageLabel: 'Rubick', imageAccent: '#58f4c8' },
+    { id: 12, weapon: 'Shadow Fiend', skin: 'Arms of Desolation', wear: 'Immortal', price: 712, color: '#ff5576', shape: 'axe', imageLabel: 'SF', imageAccent: '#ff5576' },
+    { id: 13, weapon: 'Juggernaut', skin: 'Origins of Faith', wear: 'Immortal', price: 917, color: '#ffd36b', shape: 'blade', imageLabel: 'Jugg', imageAccent: '#ffd36b' },
+    { id: 14, weapon: 'Dragon Knight', skin: 'The Devotions of Dragonus - Wings', wear: 'Mythical', price: 1467, color: '#ff8c5a', shape: 'wings', imageLabel: 'DK', imageAccent: '#ff8c5a' },
+    { id: 15, weapon: 'Phantom Assassin', skin: 'Manifold Paradox', wear: 'Arcana', price: 1924, color: '#48bfff', shape: 'daggers', imageLabel: 'PA', imageAccent: '#48bfff', image: 'https://community.akamai.steamstatic.com/economy/image/QifztM4jTRrENf7LQ1M1h6-lJfGtuM8UIgRHVY7WmQExQUo-lCe3QG6XYvO_3pD5UI5hUlQ7nF8U5uoD2Ublfqh8f7ug3lWm5RDc4YUwjdCioFBmsXoo_W5n3P4w7KzVY-lFuA/330x192' },
+    { id: 16, weapon: 'Shadow Fiend', skin: 'Demon Eater', wear: 'Arcana', price: 2028, color: '#ff5576', shape: 'axe', imageLabel: 'SF', imageAccent: '#ff5576', image: 'https://community.akamai.steamstatic.com/economy/image/IEkBqta5z6iokJzddPtiRd7IO7aI38FE6fZEu_uFfMYVVnq1DaK5QAL6XYb0m5muNt2fygcdwISuB6JSsDI2ap-nP7nQ2Efk6s2SyHCbaV6eQaKnBww5-pI9stirIQ/330x192' },
+    { id: 17, weapon: 'Juggernaut', skin: 'Exalted Bladeform Legacy', wear: 'Arcana', price: 2100, color: '#ffcf66', shape: 'blade', imageLabel: 'Jugg', imageAccent: '#ffcf66' },
+    { id: 18, weapon: 'Terrorblade', skin: 'Fractal Horns of Inner Abysm', wear: 'Arcana', price: 2777, color: '#7cf2ff', shape: 'crown', imageLabel: 'TB', imageAccent: '#7cf2ff' },
+    { id: 19, weapon: 'Invoker', skin: 'Dark Artistry Cape', wear: 'Mythical', price: 15477, color: '#9c6cff', shape: 'wings', imageLabel: 'Invoker', imageAccent: '#9c6cff', image: 'https://community.akamai.steamstatic.com/economy/image/UgG2rj5Qw1PtF4AZbx8n8Y5m3JZbJX64FdL1dQc6Y0nNh0s9cMNdH3GgloJrRzQ2S-vKVl02QG7Wm3SeQp0d8Q/330x192' },
+    { id: 20, weapon: 'Pudge', skin: 'Dragonclaw Hook', wear: 'Legendary', price: 27940, color: '#ff7a59', shape: 'hook', imageLabel: 'Pudge', imageAccent: '#ff7a59' },
+    { id: 21, weapon: 'Lina', skin: 'Fiery Soul of the Slayer', wear: 'Arcana', price: 1680, color: '#ff6a4d', shape: 'staff', imageLabel: 'Lina', imageAccent: '#ff6a4d' },
+    { id: 22, weapon: 'Crystal Maiden', skin: 'Frost Avalanche', wear: 'Mythical', price: 320, color: '#73d8ff', shape: 'staff', imageLabel: 'CM', imageAccent: '#73d8ff' },
+    { id: 23, weapon: 'Juggernaut', skin: 'Provocation of Ruin', wear: 'Immortal', price: 540, color: '#ffcf66', shape: 'blade', imageLabel: 'Jugg', imageAccent: '#ffcf66' },
+    { id: 24, weapon: 'Pudge', skin: 'Feast of Abscession', wear: 'Arcana', price: 2450, color: '#ff7d68', shape: 'hook', imageLabel: 'Pudge', imageAccent: '#ff7d68' },
+    { id: 25, weapon: 'Zeus', skin: 'Tempest Helm of the Thundergod', wear: 'Arcana', price: 1870, color: '#68b6ff', shape: 'crown', imageLabel: 'Zeus', imageAccent: '#68b6ff' },
+    { id: 26, weapon: 'Queen of Pain', skin: 'Sovereign of Torment', wear: 'Arcana', price: 2260, color: '#d86fff', shape: 'wings', imageLabel: 'QoP', imageAccent: '#d86fff' },
+    { id: 27, weapon: 'Windranger', skin: 'Compass of the Rising Gale', wear: 'Arcana', price: 2390, color: '#61f0aa', shape: 'bow', imageLabel: 'WR', imageAccent: '#61f0aa' },
+    { id: 28, weapon: 'Drow Ranger', skin: 'The Silent Wake', wear: 'Arcana', price: 2520, color: '#72a7ff', shape: 'bow', imageLabel: 'Drow', imageAccent: '#72a7ff' },
+    { id: 29, weapon: 'Faceless Void', skin: 'Claszureme Incursion', wear: 'Arcana', price: 2680, color: '#9d8bff', shape: 'hammer', imageLabel: 'Void', imageAccent: '#9d8bff' },
+    { id: 30, weapon: 'Tiny', skin: 'Ancient Inheritance', wear: 'Prestige', price: 4820, color: '#ffc759', shape: 'hammer', imageLabel: 'Tiny', imageAccent: '#ffc759' }
   ];
 
   const paths = {
@@ -64,7 +74,7 @@
 
   const $ = (selector, root = document) => root.querySelector(selector);
   const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
-  const money = value => `$${value.toFixed(2)}`;
+  const money = value => `${Math.round(value).toLocaleString('ru-RU')} COIN`;
   const itemById = id => items.find(item => item.id === Number(id));
   const ownedItems = () => state.ownedIds.map(itemById).filter(Boolean);
   const sourceTotal = () => [...state.sourceIds].reduce((sum, id) => sum + itemById(id).price, 0);
