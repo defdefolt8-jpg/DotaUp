@@ -1,12 +1,12 @@
+import type { Metadata } from "next";
+import { ProfilePage } from "./components/ProfilePage";
+
+export const metadata: Metadata = {
+  other: {
+    "theme-color": "#0b0d12",
+  },
+};
+
 export default function Home() {
-  return (
-    <main className="site-shell">
-      <iframe
-        className="site-frame"
-        src="/site/index.html"
-        title="DotaUp — Skin Upgrade Arena"
-        allow="clipboard-write"
-      />
-    </main>
-  );
+  return <ProfilePage />;
 }

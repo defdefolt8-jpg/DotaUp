@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "DotaUp — Skin Upgrade Arena",
-  description: "Интерактивная демонстрационная платформа апгрейда игровых предметов.",
+  title: "Arena Hub — Player Profile",
+  description: "Игровая профильная страница в тёмной стилистике marketplace интерфейса.",
   icons: { icon: "/favicon.svg" },
 };
 
