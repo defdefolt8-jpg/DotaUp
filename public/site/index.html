@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0d0e12">
+  <meta name="description" content="DotaUp — интерактивный демонстрационный интерфейс апгрейда игровых предметов.">
+  <title>DotaUp — Skin Upgrade Arena</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+
+  <header class="site-header">
+    <a class="brand" href="#upgrade" aria-label="DotaUp — на главную">
+      <span class="brand-mark" aria-hidden="true"><i></i><i></i></span>
+      <span><strong>DOTA<span>UP</span></strong><small>SKIN UPGRADE ARENA</small></span>
+    </a>
+
+    <nav class="main-nav" aria-label="Основная навигация">
+      <a class="active" href="#upgrade">Апгрейды</a>
+      <button type="button" data-modal-open="fairnessModal">Честность</button>
+      <a href="#inventory">Топ выигрышей</a>
+      <button type="button" data-modal-open="bonusModal">Бонусы</button>
+    </nav>
+
+    <div class="header-actions">
+      <div class="online"><i></i><span>2 418 онлайн</span></div>
+      <button class="steam-button" type="button" data-modal-open="loginModal">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-9.9 8.6l5.3 2.2a2.8 2.8 0 0 1 1.6-.6l2.4-3.5a3.7 3.7 0 1 1 3.2 5.5l-3.9 2.7A2.8 2.8 0 0 1 5.3 18l-3-1.2A10 10 0 1 0 12 2Zm-4.4 14.9a1.7 1.7 0 1 0 1.4-3.1l-1 .7 1.1.5a1.2 1.2 0 1 1-1 2.2l-1-.4.5.1Zm7.7-4a2.4 2.4 0 1 0 0-4.8 2.4 2.4 0 0 0 0 4.8Zm0-.6a1.8 1.8 0 1 1 0-3.6 1.8 1.8 0 0 1 0 3.6Z"/></svg>
+        <span>Войти через Steam</span>
+      </button>
+      <button class="menu-toggle" id="menuToggle" type="button" aria-label="Открыть меню" aria-expanded="false"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+
+  <section class="live-strip" aria-label="Последние апгрейды">
+    <div class="live-label"><i></i> LIVE</div>
+    <div class="live-viewport">
+      <div class="live-track" id="liveTrack"></div>
+    </div>
+  </section>
+
+  <main>
+    <section class="upgrade-section" id="upgrade">
+      <div class="section-heading">
+        <div><span class="eyebrow">UPGRADE TERMINAL</span><h1>Подними уровень предмета</h1></div>
+        <div class="balance-card"><span>Демо-баланс</span><strong id="balanceValue">$1 250.00</strong><button type="button">+</button></div>
+      </div>
+
+      <div class="mobile-tabs" role="tablist" aria-label="Выбор панели">
+        <button class="active" type="button" role="tab" data-mobile-tab="source">Мой инвентарь <span id="mobileSourceCount">0</span></button>
+        <button type="button" role="tab" data-mobile-tab="target">Целевой скин</button>
+      </div>
+
+      <div class="upgrade-workspace">
+        <section class="selection-panel source-panel active-mobile" data-mobile-panel="source">
+          <div class="panel-title"><div><span>01</span><h2>Твой инвентарь</h2></div><button type="button" class="text-button" id="clearSelection">Очистить</button></div>
+          <div class="selected-items" id="selectedSources">
+            <div class="empty-state"><div class="plus-ring">+</div><strong>Выбери предметы</strong><span>Можно выбрать несколько</span></div>
+          </div>
+          <div class="panel-total"><span>Выбрано: <b id="selectedCount">0</b></span><strong id="sourceTotal">$0.00</strong></div>
+        </section>
+
+        <section class="upgrade-core" aria-label="Настройки апгрейда">
+          <div class="radar-wrap" id="radarWrap">
+            <svg class="radar" viewBox="0 0 240 240" role="img" aria-label="Шанс успешного апгрейда">
+              <defs><filter id="glow"><feGaussianBlur stdDeviation="3.5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+              <circle class="radar-base" cx="120" cy="120" r="101"/>
+              <circle class="radar-grid" cx="120" cy="120" r="75"/>
+              <circle class="radar-grid" cx="120" cy="120" r="48"/>
+              <circle class="radar-progress" id="chanceCircle" cx="120" cy="120" r="101" pathLength="100"/>
+              <g class="radar-cross"><path d="M120 31v178M31 120h178"/></g>
+              <path class="radar-sweep" d="M120 120 120 22A98 98 0 0 1 205 71Z"/>
+            </svg>
+            <div class="chance-value"><strong id="chanceValue">35.00</strong><span>% ШАНС</span></div>
+            <div class="radar-pointer" id="radarPointer"></div>
+          </div>
+
+          <div class="result-message" id="resultMessage" aria-live="polite">Выбери предметы для апгрейда</div>
+          <button class="upgrade-button" id="upgradeButton" type="button"><span class="button-shine"></span><b>UPGRADE</b><small id="upgradeCost">Выбери предмет</small></button>
+
+          <div class="mode-switch" aria-label="Режим указателя">
+            <button class="active" type="button" data-mode="under">UNDER</button>
+            <button type="button" data-mode="over">OVER</button>
+          </div>
+
+          <div class="chance-control">
+            <div><label for="chanceSlider">Ручной шанс</label><output id="chanceOutput">35%</output></div>
+            <input id="chanceSlider" type="range" min="5" max="80" value="35" step="1">
+            <div class="multiplier-row">
+              <button type="button" data-multiplier="2">x2</button>
+              <button class="active" type="button" data-multiplier="3">x3</button>
+              <button type="button" data-multiplier="5">x5</button>
+              <button type="button" data-multiplier="10">x10</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="selection-panel target-panel" data-mobile-panel="target">
+          <div class="panel-title"><div><span>02</span><h2>Целевой скин</h2></div><button type="button" class="text-button" id="randomTarget">Случайный</button></div>
+          <div class="selected-items" id="selectedTarget">
+            <div class="empty-state"><div class="plus-ring">+</div><strong>Выбери награду</strong><span>Предмет, который хочешь получить</span></div>
+          </div>
+          <div class="panel-total"><span>Множитель: <b id="targetMultiplier">—</b></span><strong id="targetPrice">$0.00</strong></div>
+        </section>
+      </div>
+    </section>
+
+    <section class="inventory-section" id="inventory">
+      <div class="inventory-head">
+        <div><span class="eyebrow">ITEM DATABASE</span><h2>Выбери предмет</h2></div>
+        <div class="inventory-tools">
+          <label class="search-box"><span aria-hidden="true">⌕</span><input id="itemSearch" type="search" placeholder="Поиск предмета…" autocomplete="off"></label>
+          <select id="rarityFilter" aria-label="Фильтр редкости"><option value="all">Все редкости</option><option value="consumer">Consumer</option><option value="classified">Classified</option><option value="covert">Covert</option></select>
+        </div>
+      </div>
+      <div class="inventory-subnav">
+        <div class="inventory-type-tabs"><button class="active" type="button" data-grid-mode="source">Мой инвентарь</button><button type="button" data-grid-mode="target">Выбор скина</button></div>
+        <span id="itemsFound">8 предметов</span>
+      </div>
+      <div class="item-grid" id="itemGrid"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <a class="brand footer-brand" href="#upgrade"><span class="brand-mark"><i></i><i></i></span><span><strong>DOTA<span>UP</span></strong><small>PLAY SMART. UPGRADE BOLD.</small></span></a>
+    <div class="footer-links"><button data-modal-open="fairnessModal" type="button">Проверка честности</button><a href="#upgrade">Соглашение</a><a href="#upgrade">FAQ</a><a href="mailto:support@dotaup.example">Поддержка</a></div>
+    <div class="socials"><a href="#upgrade" aria-label="Telegram">TG</a><a href="#upgrade" aria-label="Discord">DS</a><a href="#upgrade" aria-label="VK">VK</a></div>
+    <p>Демонстрационный интерфейс. DotaUp не связан с Valve Corporation или Steam. Все названия предметов вымышлены.</p>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <div class="modal" id="loginModal" aria-hidden="true">
+    <div class="modal-backdrop" data-modal-close></div><div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="loginTitle"><button class="modal-close" data-modal-close aria-label="Закрыть">×</button><span class="modal-icon">S</span><h2 id="loginTitle">Авторизация Steam</h2><p>Это демонстрационная версия. В реальном продукте здесь будет безопасная авторизация через Steam OpenID.</p><button class="upgrade-button modal-action" type="button" data-demo-login><b>ПРОДОЛЖИТЬ</b></button></div>
+  </div>
+  <div class="modal" id="fairnessModal" aria-hidden="true">
+    <div class="modal-backdrop" data-modal-close></div><div class="modal-card wide" role="dialog" aria-modal="true" aria-labelledby="fairnessTitle"><button class="modal-close" data-modal-close aria-label="Закрыть">×</button><span class="eyebrow">PROVABLY FAIR</span><h2 id="fairnessTitle">Проверка честности</h2><p>Результат демо-раунда формируется локально в браузере. Для реального сервиса сюда подключается схема server seed + client seed + nonce и независимая проверка хеша.</p><div class="hash-row"><code>9f4d…a81c</code><button type="button" data-copy-hash>Копировать</button></div></div>
+  </div>
+  <div class="modal" id="bonusModal" aria-hidden="true">
+    <div class="modal-backdrop" data-modal-close></div><div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="bonusTitle"><button class="modal-close" data-modal-close aria-label="Закрыть">×</button><span class="modal-icon gift">✦</span><h2 id="bonusTitle">Бонусный код</h2><p>Введи промокод, чтобы активировать демонстрационный бонус.</p><label class="promo-field"><input id="promoInput" placeholder="DOTAUP2026" maxlength="20"><button type="button" id="activatePromo">Активировать</button></label></div>
+  </div>
+
+  <script src="./script.js"></script>
+</body>
+</html>
