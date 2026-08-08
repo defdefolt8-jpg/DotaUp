@@ -109,8 +109,8 @@
 
   const $ = (selector, root = document) => root.querySelector(selector);
   const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
-  const steamLoginUrl = '/api/auth/steam/login?return_to=/';
-  const steamLogoutUrl = '/api/auth/logout?return_to=/';
+  const steamLoginUrl = '/api/auth/steam/login?return_to=/site/index.html';
+  const steamLogoutUrl = '/api/auth/logout?return_to=/site/index.html';
   const profileStateKey = 'dotaupProfileState';
   const money = value => `${Math.round(value).toLocaleString('ru-RU')} COIN`;
   const itemById = id => items.find(item => item.id === Number(id));

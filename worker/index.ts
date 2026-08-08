@@ -84,7 +84,11 @@ const worker = {
 
     if (url.pathname === "/api/auth/me" && request.method === "GET") {
       const session = await readSteamSession(request, env);
-      const profile = session ? await getStoredSteamProfile(env, session) : null;
+      const profile = session ? await getStoredSteamProfile(env, session).catch(() => ({
+        steamId: session.steamId,
+        displayName: session.displayName || `Steam ${session.steamId.slice(-4)}`,
+        avatarUrl: session.avatarUrl || null,
+      })) : null;
       return Response.json({
         authenticated: Boolean(session),
         user: profile ? {
@@ -137,7 +141,7 @@ type SteamProfile = {
 function startSteamLogin(request: Request): Response {
   const url = new URL(request.url);
   const origin = url.origin;
-  const returnTo = safeReturnTo(url.searchParams.get("return_to"));
+  const returnTo = safeReturnTo(url.searchParams.get("return_to") ?? "/site/index.html");
   const callback = new URL("/api/auth/steam/callback", origin);
   callback.searchParams.set("return_to", returnTo);
 
@@ -168,7 +172,7 @@ async function finishSteamLogin(request: Request, env: Env): Promise<Response> {
   }
 
   const profile = await fetchSteamProfile(steamId);
-  await upsertSteamUser(env, profile);
+  await upsertSteamUser(env, profile).catch(() => undefined);
 
   return new Response(null, {
     status: 302,
