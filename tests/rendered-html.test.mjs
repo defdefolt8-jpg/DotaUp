@@ -23,17 +23,14 @@ async function render() {
   );
 }
 
-test("server-renders the profile page", async () => {
+test("server-renders the main site frame", async () => {
   const response = await render();
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
 
   const html = await response.text();
-  assert.match(html, /Arena Hub/i);
-  assert.match(html, /PlayerName/);
-  assert.match(html, /Баланс/);
-  assert.match(html, /Инвентарь/);
-  assert.match(html, /У вас пока нет предметов/);
+  assert.match(html, /site\/index\.html/);
+  assert.match(html, /site-frame/);
 });
 
 test("uses component-based profile implementation", async () => {
@@ -48,7 +45,7 @@ test("uses component-based profile implementation", async () => {
   ]);
 
   assert.match(packageJson, /"lucide-react"/);
-  assert.match(page, /ProfilePage/);
+  assert.match(page, /site\/index\.html/);
   assert.match(profilePage, /ProfileCard/);
   assert.match(profilePage, /ProfileTabs/);
   assert.match(profileCard, /UserInfo/);
