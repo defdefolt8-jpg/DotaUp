@@ -392,7 +392,8 @@
     $('#profileInventoryCount').textContent = String(itemsOwned.length);
     $('#profileItemHistoryCount').textContent = String(state.itemHistory.length);
     $('#profileGameHistoryCount').textContent = String(state.gameHistory.length);
-    $('#profileSoldValue').textContent = money(0);
+    const soldValue = $('#profileSoldValue');
+    if (soldValue) soldValue.textContent = money(0);
     $('#profileUpgradeCount').textContent = String(state.gameHistory.length);
     const bestDrop = itemById(state.user.bestDropId);
     if (bestDrop) {
