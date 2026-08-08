@@ -41,7 +41,8 @@
     spinDuration: 4000,
     chancePresets: [60, 45, 30, 15],
     balance: 1250,
-    marketView: 'inventory'
+    marketView: 'inventory',
+    isLoggedIn: false
   };
 
   const $ = (selector, root = document) => root.querySelector(selector);
@@ -58,6 +59,22 @@
 
   function updateBalance() {
     $$('#balanceValue').forEach(node => { node.textContent = money(state.balance); });
+  }
+
+  function updateAuthUI() {
+    const loginButton = $('.steam-button');
+    if (!loginButton) return;
+    loginButton.classList.toggle('is-authenticated', state.isLoggedIn);
+    $('span', loginButton).textContent = state.isLoggedIn ? 'Steam подключен' : 'Войти через Steam';
+    $('#upgradeButton').disabled = !state.isLoggedIn || state.spinning;
+    $('#purchaseCartButton').disabled = !state.isLoggedIn;
+  }
+
+  function requireAuth() {
+    if (state.isLoggedIn) return true;
+    openModal('loginModal');
+    showToast('Сначала войди в аккаунт Steam', 'error');
+    return false;
   }
 
   function renderLive() {
@@ -94,8 +111,13 @@
     $('#targetPrice').textContent = target ? money(target.price) : '$0.00';
     $('#targetMultiplier').textContent = target && sourceTotal() ? `x${(target.price / sourceTotal()).toFixed(2)}` : '—';
     $('#upgradeCost').textContent = target && selected.length ? `${money(sourceTotal())} → ${money(target.price)}` : 'Собери инвентарь и выбери цель';
-    if (!state.spinning) $('#resultMessage').textContent = target && selected.length ? 'Терминал готов к запуску' : 'Выбери предметы для апгрейда';
+    if (!state.spinning) {
+      $('#resultMessage').textContent = !state.isLoggedIn
+        ? 'Войди в Steam, чтобы начать апгрейды'
+        : target && selected.length ? 'Терминал готов к запуску' : 'Выбери предметы для апгрейда';
+    }
     syncChanceToSelection();
+    updateAuthUI();
   }
 
   function renderOwnedGrid() {
@@ -167,6 +189,7 @@
   }
 
   function toggleCartItem(id) {
+    if (!requireAuth()) return;
     const item = itemById(id);
     if (!item) return;
     if (state.ownedIds.includes(id)) return showToast('Этот скин уже куплен', 'error');
@@ -179,6 +202,7 @@
   }
 
   function purchaseCart() {
+    if (!requireAuth()) return;
     const ids = [...state.cartIds];
     if (!ids.length) return showToast('Корзина пуста', 'error');
     const total = cartTotal();
@@ -195,6 +219,7 @@
   }
 
   function selectInventoryItem(id) {
+    if (!requireAuth()) return;
     if (!state.ownedIds.includes(id)) return;
     if (state.sourceIds.has(id)) state.sourceIds.delete(id);
     else if (state.sourceIds.size < 3) state.sourceIds.add(id);
@@ -219,6 +244,7 @@
   }
 
   function chooseTargetForChance(desiredChance) {
+    if (!requireAuth()) return;
     const total = sourceTotal();
     if (!total) return showToast('Сначала выбери предметы из инвентаря', 'error');
     const desiredPrice = total * 100 / desiredChance;
@@ -259,6 +285,7 @@
   }
 
   function runUpgrade() {
+    if (!requireAuth()) return;
     if (state.spinning) return;
     if (!state.sourceIds.size || !state.targetId) return showToast('Выбери исходный и целевой предмет', 'error');
     const roll = Math.random() * 100;
@@ -328,6 +355,7 @@
   $('#targetItemGrid').addEventListener('click', event => {
     const card = event.target.closest('.item-card');
     if (!card) return;
+    if (!requireAuth()) return;
     if (!state.sourceIds.size) return showToast('Сначала выбери предметы из инвентаря', 'error');
     state.targetId = Number(card.dataset.itemId);
     renderSelection();
@@ -345,6 +373,7 @@
     renderGrid();
   });
   $('#randomTarget').addEventListener('click', () => {
+    if (!requireAuth()) return;
     const candidates = items.filter(item => item.price > sourceTotal());
     if (!state.sourceIds.size || !candidates.length) return showToast('Сначала выбери предметы из инвентаря', 'error');
     state.targetId = candidates[Math.floor(Math.random() * candidates.length)].id;
@@ -390,7 +419,14 @@
   $$('[data-modal-open]').forEach(button => button.addEventListener('click', () => openModal(button.dataset.modalOpen)));
   $$('[data-modal-close]').forEach(button => button.addEventListener('click', () => closeModal(button.closest('.modal'))));
   document.addEventListener('keydown', event => { if (event.key === 'Escape') $$('.modal.open').forEach(closeModal); });
-  $('[data-demo-login]').addEventListener('click', event => { closeModal(event.target.closest('.modal')); showToast('Демо-авторизация выполнена', 'success'); });
+  $('[data-demo-login]').addEventListener('click', event => {
+    state.isLoggedIn = true;
+    localStorage.setItem('dotaupSteamLoggedIn', '1');
+    closeModal(event.target.closest('.modal'));
+    updateAuthUI();
+    renderSelection();
+    showToast('Steam-аккаунт подключен', 'success');
+  });
   $('[data-copy-hash]').addEventListener('click', () => navigator.clipboard?.writeText('9f4d-demo-seed-a81c').then(() => showToast('Хеш скопирован', 'success')).catch(() => showToast('Хеш: 9f4d-demo-seed-a81c')));
   $('#activatePromo').addEventListener('click', () => {
     const valid = $('#promoInput').value.trim().toUpperCase() === 'DOTAUP2026';
@@ -404,6 +440,7 @@
   });
 
   loadChancePresets();
+  state.isLoggedIn = localStorage.getItem('dotaupSteamLoggedIn') === '1';
   updateBalance();
   renderLive();
   setMarketView('inventory');
