@@ -18,20 +18,15 @@
       <span><strong>DOTA<span>UP</span></strong><small>SKIN UPGRADE ARENA</small></span>
     </a>
 
-    <nav class="main-nav" aria-label="Основная навигация">
-      <a class="active" href="#upgrade">Апгрейды</a>
-      <button type="button" data-modal-open="fairnessModal">Честность</button>
-      <a href="#inventory">Топ выигрышей</a>
-      <button type="button" data-modal-open="bonusModal">Бонусы</button>
-    </nav>
-
     <div class="header-actions">
-      <div class="online"><i></i><span>2 418 онлайн</span></div>
+      <div class="header-balance">
+        <div class="balance-pill"><span>DEMO</span></div>
+        <div class="balance-pill balance-pill-wide"><span>Баланс</span><strong id="balanceValue">$1250.00</strong></div>
+      </div>
       <button class="steam-button" type="button" data-modal-open="loginModal">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-9.9 8.6l5.3 2.2a2.8 2.8 0 0 1 1.6-.6l2.4-3.5a3.7 3.7 0 1 1 3.2 5.5l-3.9 2.7A2.8 2.8 0 0 1 5.3 18l-3-1.2A10 10 0 1 0 12 2Zm-4.4 14.9a1.7 1.7 0 1 0 1.4-3.1l-1 .7 1.1.5a1.2 1.2 0 1 1-1 2.2l-1-.4.5.1Zm7.7-4a2.4 2.4 0 1 0 0-4.8 2.4 2.4 0 0 0 0 4.8Zm0-.6a1.8 1.8 0 1 1 0-3.6 1.8 1.8 0 0 1 0 3.6Z"/></svg>
         <span>Войти через Steam</span>
       </button>
-      <button class="menu-toggle" id="menuToggle" type="button" aria-label="Открыть меню" aria-expanded="false"><span></span><span></span><span></span></button>
     </div>
   </header>
 
@@ -44,11 +39,6 @@
 
   <main>
     <section class="upgrade-section" id="upgrade">
-      <div class="section-heading">
-        <div><span class="eyebrow">UPGRADE TERMINAL</span><h1>Подними уровень предмета</h1></div>
-        <div class="balance-card"><span>Демо-баланс</span><strong id="balanceValue">$1 250.00</strong><button type="button">+</button></div>
-      </div>
-
       <div class="mobile-tabs" role="tablist" aria-label="Выбор панели">
         <button class="active" type="button" role="tab" data-mobile-tab="source">Мой инвентарь <span id="mobileSourceCount">0</span></button>
         <button type="button" role="tab" data-mobile-tab="target">Целевой скин</button>
@@ -58,12 +48,17 @@
         <section class="selection-panel source-panel active-mobile" data-mobile-panel="source">
           <div class="panel-title"><div><span>01</span><h2>Твой инвентарь</h2></div><button type="button" class="text-button" id="clearSelection">Очистить</button></div>
           <div class="selected-items" id="selectedSources">
-            <div class="empty-state"><div class="plus-ring">+</div><strong>Выбери предметы</strong><span>Можно выбрать несколько</span></div>
+            <div class="empty-state"><div class="plus-ring">+</div><strong>Инвентарь пуст</strong><span>Купи предметы в магазине ниже</span></div>
           </div>
           <div class="panel-total"><span>Выбрано: <b id="selectedCount">0</b></span><strong id="sourceTotal">$0.00</strong></div>
         </section>
 
         <section class="upgrade-core" aria-label="Настройки апгрейда">
+          <div class="speed-switch speed-switch-top" aria-label="Скорость анимации">
+            <button class="active" type="button" data-speed="normal">ОБЫЧНАЯ · 4S</button>
+            <button type="button" data-speed="fast">FAST · 1S</button>
+          </div>
+
           <div class="radar-wrap" id="radarWrap">
             <svg class="radar" viewBox="0 0 240 240" role="img" aria-label="Шанс успешного апгрейда">
               <defs><filter id="glow"><feGaussianBlur stdDeviation="3.5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
@@ -74,12 +69,12 @@
               <g class="radar-cross"><path d="M120 31v178M31 120h178"/></g>
               <path class="radar-sweep" d="M120 120 120 22A98 98 0 0 1 205 71Z"/>
             </svg>
-            <div class="chance-value"><strong id="chanceValue">35.00</strong><span>% ШАНС</span></div>
+            <div class="chance-value"><strong id="chanceValue">0.00</strong><span>% ШАНС</span></div>
             <div class="radar-pointer" id="radarPointer"></div>
           </div>
 
           <div class="result-message" id="resultMessage" aria-live="polite">Выбери предметы для апгрейда</div>
-          <button class="upgrade-button" id="upgradeButton" type="button"><span class="button-shine"></span><b>UPGRADE</b><small id="upgradeCost">Выбери предмет</small></button>
+          <button class="upgrade-button" id="upgradeButton" type="button"><span class="button-shine"></span><b>UPGRADE</b><small id="upgradeCost">Собери инвентарь и выбери цель</small></button>
 
           <div class="mode-switch" aria-label="Режим указателя">
             <button class="active" type="button" data-mode="under">UNDER</button>
@@ -87,7 +82,7 @@
           </div>
 
           <div class="chance-control">
-            <div class="auto-chance-head"><span>Автоматический шанс</span><small>Зависит от стоимости скина</small></div>
+            <div class="auto-chance-head"><span>Автоматический шанс</span><small>Зависит от стоимости выбранной цели</small></div>
             <div class="multiplier-row">
               <button type="button" data-chance="60">60%</button>
               <button class="active" type="button" data-chance="45">45%</button>
@@ -95,10 +90,7 @@
               <button type="button" data-chance="15">15%</button>
             </div>
             <div class="upgrade-options">
-              <div class="speed-switch" aria-label="Скорость анимации">
-                <button class="active" type="button" data-speed="normal">4 SEC</button>
-                <button type="button" data-speed="fast">FAST · 1 SEC</button>
-              </div>
+              <div></div>
               <button class="chance-settings-button" id="chanceSettingsButton" type="button" aria-label="Редактировать проценты" aria-expanded="false">⚙</button>
             </div>
             <div class="chance-editor" id="chanceEditor" aria-hidden="true">
@@ -117,7 +109,7 @@
         <section class="selection-panel target-panel" data-mobile-panel="target">
           <div class="panel-title"><div><span>02</span><h2>Целевой скин</h2></div><button type="button" class="text-button" id="randomTarget">Случайный</button></div>
           <div class="selected-items" id="selectedTarget">
-            <div class="empty-state"><div class="plus-ring">+</div><strong>Выбери награду</strong><span>Предмет, который хочешь получить</span></div>
+            <div class="empty-state"><div class="plus-ring">+</div><strong>Выбери награду</strong><span>Цель для апгрейда появится здесь</span></div>
           </div>
           <div class="panel-total"><span>Множитель: <b id="targetMultiplier">—</b></span><strong id="targetPrice">$0.00</strong></div>
         </section>
@@ -126,21 +118,26 @@
 
     <section class="inventory-section market-section" id="inventory">
       <div class="market-mobile-tabs" role="tablist" aria-label="Каталоги предметов">
-        <button class="active" type="button" data-market-tab="source">Мой инвентарь</button>
-        <button type="button" data-market-tab="target">Выбрать скин</button>
+        <button class="active" type="button" data-market-tab="source">Инвентарь / Магазин</button>
+        <button type="button" data-market-tab="target">Выбор скина</button>
       </div>
 
       <div class="dual-market">
         <section class="market-pane active-mobile-market" data-market-pane="source">
           <div class="market-toolbar">
-            <div class="market-title"><span class="market-icon">▣</span><div><small>МОИ ПРЕДМЕТЫ</small><h2>Инвентарь</h2></div><b id="sourceItemsFound">0</b></div>
+            <div class="market-title"><span class="market-icon">▣</span><div><small>ТВОИ ПРЕДМЕТЫ</small><h2>Инвентарь и магазин</h2></div><b id="sourceItemsFound">0</b></div>
+            <div class="source-view-switch">
+              <button class="active" type="button" data-source-view="inventory">Инвентарь</button>
+              <button type="button" data-source-view="store">Магазин</button>
+            </div>
             <div class="market-filters">
               <label class="compact-search"><input id="sourceSearch" type="search" placeholder="Поиск" autocomplete="off"><span>⌕</span></label>
               <label class="price-filter"><span>Цена от</span><input id="sourceMinPrice" type="number" min="0" placeholder="$0"></label>
               <label class="price-filter"><span>до</span><input id="sourceMaxPrice" type="number" min="0" placeholder="∞"></label>
             </div>
           </div>
-          <div class="market-summary"><span>Выбери до 3 предметов</span><strong id="marketSourceTotal">$0.00</strong></div>
+          <div class="market-summary"><span id="sourceHint">Выбери до 3 предметов</span><strong id="marketSourceTotal">$0.00</strong></div>
+          <div class="market-empty-note" id="inventoryEmptyNote">Сейчас у тебя нет ни одного скина в инвентаре.</div>
           <div class="market-grid" id="sourceItemGrid"></div>
         </section>
 
@@ -153,7 +150,7 @@
               <label class="price-filter"><span>до</span><input id="targetMaxPrice" type="number" min="0" placeholder="∞"></label>
             </div>
           </div>
-          <div class="market-summary"><span>Доступные цели дороже выбранных предметов</span><strong id="marketTargetPrice">$0.00</strong></div>
+          <div class="market-summary"><span>Доступные цели всегда дороже выбранных предметов</span><strong id="marketTargetPrice">$0.00</strong></div>
           <div class="market-grid" id="targetItemGrid"></div>
         </section>
       </div>
