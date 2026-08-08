@@ -30,11 +30,12 @@ export function ProfilePage() {
 
     fetch("/api/auth/me", { credentials: "include", cache: "no-store" })
       .then((response) => response.json())
-      .then((payload: { authenticated?: boolean; user?: { steamId?: string; displayName?: string } | null }) => {
+      .then((payload: { authenticated?: boolean; user?: { steamId?: string; displayName?: string; avatar?: string | null } | null }) => {
         if (!alive || !payload.authenticated || !payload.user?.steamId) return;
         setSteamProfile({
           nickname: payload.user.displayName || `Steam ${payload.user.steamId.slice(-4)}`,
           id: payload.user.steamId,
+          avatarUrl: payload.user.avatar || null,
         });
       })
       .catch(() => undefined);

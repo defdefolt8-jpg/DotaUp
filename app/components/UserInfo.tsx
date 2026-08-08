@@ -10,11 +10,23 @@ type UserInfoProps = {
 };
 
 export function UserInfo({ profile, copied, onCopyId }: UserInfoProps) {
+  const initials = profile.nickname
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join("")
+    .toUpperCase() || "ST";
+
   return (
     <section className="rounded-2xl border border-[#2c3240] bg-[#171b22] p-5 shadow-[0_18px_50px_rgba(0,0,0,0.25)]">
       <div className="flex items-start gap-4">
-        <div className="flex h-[84px] w-[84px] items-center justify-center rounded-2xl border border-[#8dfc52]/30 bg-[radial-gradient(circle_at_top,#27342b_0%,#151922_72%)] text-2xl font-black text-[#8dfc52]">
-          DI
+        <div className="flex h-[84px] w-[84px] shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-[#8dfc52]/30 bg-[radial-gradient(circle_at_top,#27342b_0%,#151922_72%)] text-2xl font-black text-[#8dfc52]">
+          {profile.avatarUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={profile.avatarUrl} alt="" className="h-full w-full object-cover" />
+          ) : (
+            initials
+          )}
         </div>
 
         <div className="min-w-0 flex-1">

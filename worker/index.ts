@@ -84,12 +84,13 @@ const worker = {
 
     if (url.pathname === "/api/auth/me" && request.method === "GET") {
       const session = await readSteamSession(request, env);
+      const profile = session ? await getStoredSteamProfile(env, session) : null;
       return Response.json({
         authenticated: Boolean(session),
-        user: session ? {
-          steamId: session.steamId,
-          displayName: `Steam ${session.steamId.slice(-4)}`,
-          avatar: null,
+        user: profile ? {
+          steamId: profile.steamId,
+          displayName: profile.displayName,
+          avatar: profile.avatarUrl,
         } : null,
       }, {
         headers: {
@@ -121,8 +122,16 @@ const STEAM_SESSION_TTL_SECONDS = 60 * 60 * 24 * 7;
 
 type SteamSession = {
   steamId: string;
+  displayName?: string;
+  avatarUrl?: string | null;
   issuedAt: number;
   expiresAt: number;
+};
+
+type SteamProfile = {
+  steamId: string;
+  displayName: string;
+  avatarUrl: string | null;
 };
 
 function startSteamLogin(request: Request): Response {
@@ -158,13 +167,14 @@ async function finishSteamLogin(request: Request, env: Env): Promise<Response> {
     return authError(returnTo, "steam_validation_failed");
   }
 
-  await upsertSteamUser(env, steamId);
+  const profile = await fetchSteamProfile(steamId);
+  await upsertSteamUser(env, profile);
 
   return new Response(null, {
     status: 302,
     headers: {
       location: returnTo,
-      "set-cookie": await createSteamSessionCookie(env, steamId),
+      "set-cookie": await createSteamSessionCookie(env, profile),
     },
   });
 }
@@ -207,26 +217,96 @@ function extractSteamId(claimedId: string): string | null {
   return match?.[1] ?? null;
 }
 
-async function upsertSteamUser(env: Env, steamId: string): Promise<void> {
-  const now = new Date().toISOString();
+async function fetchSteamProfile(steamId: string): Promise<SteamProfile> {
+  const fallback: SteamProfile = {
+    steamId,
+    displayName: `Steam ${steamId.slice(-4)}`,
+    avatarUrl: null,
+  };
+
+  try {
+    const response = await fetch(`https://steamcommunity.com/profiles/${steamId}?xml=1`, {
+      headers: {
+        "user-agent": "DotaUp Steam profile loader",
+      },
+    });
+    if (!response.ok) return fallback;
+
+    const xml = await response.text();
+    return {
+      steamId,
+      displayName: decodeXml(readXmlTag(xml, "steamID")) || fallback.displayName,
+      avatarUrl: decodeXml(readXmlTag(xml, "avatarFull")) || decodeXml(readXmlTag(xml, "avatarMedium")) || null,
+    };
+  } catch {
+    return fallback;
+  }
+}
+
+function readXmlTag(xml: string, tag: string): string | null {
+  const match = xml.match(new RegExp(`<${tag}>\\s*(?:<!\\[CDATA\\[)?([\\s\\S]*?)(?:\\]\\]>)?\\s*<\\/${tag}>`, "i"));
+  return match?.[1]?.trim() ?? null;
+}
+
+function decodeXml(value: string | null): string | null {
+  if (!value) return null;
+  return value
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, "\"")
+    .replace(/&#39;/g, "'");
+}
+
+async function ensureSteamUsersTable(env: Env): Promise<void> {
   await env.DB.prepare(`
     CREATE TABLE IF NOT EXISTS steam_users (
       steam_id TEXT PRIMARY KEY,
+      display_name TEXT,
+      avatar_url TEXT,
       created_at TEXT NOT NULL,
       last_login_at TEXT NOT NULL
     )
   `).run();
-  await env.DB.prepare(`
-    INSERT INTO steam_users (steam_id, created_at, last_login_at)
-    VALUES (?1, ?2, ?2)
-    ON CONFLICT(steam_id) DO UPDATE SET last_login_at = excluded.last_login_at
-  `).bind(steamId, now).run();
+
+  await env.DB.prepare("ALTER TABLE steam_users ADD COLUMN display_name TEXT").run().catch(() => undefined);
+  await env.DB.prepare("ALTER TABLE steam_users ADD COLUMN avatar_url TEXT").run().catch(() => undefined);
 }
 
-async function createSteamSessionCookie(env: Env, steamId: string): Promise<string> {
+async function getStoredSteamProfile(env: Env, session: SteamSession): Promise<SteamProfile> {
+  await ensureSteamUsersTable(env);
+  const row = await env.DB.prepare(`
+    SELECT steam_id, display_name, avatar_url
+    FROM steam_users
+    WHERE steam_id = ?1
+  `).bind(session.steamId).first<{ steam_id: string; display_name: string | null; avatar_url: string | null }>();
+
+  return {
+    steamId: row?.steam_id ?? session.steamId,
+    displayName: row?.display_name || session.displayName || `Steam ${session.steamId.slice(-4)}`,
+    avatarUrl: row?.avatar_url || session.avatarUrl || null,
+  };
+}
+
+async function upsertSteamUser(env: Env, profile: SteamProfile): Promise<void> {
+  const now = new Date().toISOString();
+  await ensureSteamUsersTable(env);
+  await env.DB.prepare(`
+    INSERT INTO steam_users (steam_id, display_name, avatar_url, created_at, last_login_at)
+    VALUES (?1, ?2, ?3, ?4, ?4)
+    ON CONFLICT(steam_id) DO UPDATE SET
+      display_name = excluded.display_name,
+      avatar_url = excluded.avatar_url,
+      last_login_at = excluded.last_login_at
+  `).bind(profile.steamId, profile.displayName, profile.avatarUrl, now).run();
+}
+
+async function createSteamSessionCookie(env: Env, profile: SteamProfile): Promise<string> {
   const now = Math.floor(Date.now() / 1000);
   const session: SteamSession = {
-    steamId,
+    steamId: profile.steamId,
+    displayName: profile.displayName,
+    avatarUrl: profile.avatarUrl,
     issuedAt: now,
     expiresAt: now + STEAM_SESSION_TTL_SECONDS,
   };

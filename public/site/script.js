@@ -95,6 +95,7 @@
     user: {
       name: 'DemoInvoker',
       steamId: 'ID 602197',
+      avatar: null,
       level: 27,
       bestDropId: 8
     },
@@ -205,6 +206,25 @@
     if ($('#profileName')) $('#profileName').textContent = state.user.name;
     if ($('#profileSteamId')) $('#profileSteamId').textContent = state.user.steamId;
     if ($('#profileLevel')) $('#profileLevel').textContent = `LVL ${state.user.level}`;
+    syncSteamAvatars();
+  }
+
+  function userInitials(name) {
+    const clean = String(name || 'Steam').replace(/[^\p{L}\p{N}\s_-]/gu, '').trim();
+    return clean.split(/\s+/).slice(0, 2).map(part => part[0]).join('').toUpperCase() || 'ST';
+  }
+
+  function syncSteamAvatars() {
+    $$('.profile-avatar').forEach(avatar => {
+      avatar.textContent = userInitials(state.user.name);
+      if (state.user.avatar) {
+        avatar.classList.add('has-image');
+        avatar.style.backgroundImage = `url("${state.user.avatar}")`;
+      } else {
+        avatar.classList.remove('has-image');
+        avatar.style.backgroundImage = '';
+      }
+    });
   }
 
   function requireAuth() {
@@ -222,6 +242,7 @@
       if (payload.user) {
         state.user.name = payload.user.displayName || state.user.name;
         state.user.steamId = payload.user.steamId ? `ID ${payload.user.steamId}` : state.user.steamId;
+        state.user.avatar = payload.user.avatar || null;
       }
     } catch {
       state.isLoggedIn = false;
