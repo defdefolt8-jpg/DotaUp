@@ -2,18 +2,18 @@
   'use strict';
 
   const items = [
-    { id: 1, weapon: 'Phantom Blade', skin: 'Neon Rift', wear: 'FN', price: 18.4, rarity: 'consumer', color: '#4bb8ff', shape: 'blade' },
-    { id: 2, weapon: 'Abyssal Hook', skin: 'Deep Current', wear: 'MW', price: 26.75, rarity: 'consumer', color: '#50c8ff', shape: 'hook' },
-    { id: 3, weapon: 'Dragon Lance', skin: 'Ember Scale', wear: 'FT', price: 42.1, rarity: 'classified', color: '#a878ff', shape: 'lance' },
-    { id: 4, weapon: 'Arcane Staff', skin: 'Void Signal', wear: 'FN', price: 67.9, rarity: 'classified', color: '#a878ff', shape: 'staff' },
-    { id: 5, weapon: 'Crimson Edge', skin: 'Blood Circuit', wear: 'MW', price: 94.5, rarity: 'classified', color: '#c368ff', shape: 'blade' },
-    { id: 6, weapon: 'Celestial Bow', skin: 'Polar Light', wear: 'FN', price: 138.2, rarity: 'covert', color: '#ff5576', shape: 'bow' },
-    { id: 7, weapon: 'Titan Hammer', skin: 'Solar Core', wear: 'FT', price: 215, rarity: 'covert', color: '#ff5576', shape: 'hammer' },
-    { id: 8, weapon: 'Eternal Wings', skin: 'Astral Dominion', wear: 'FN', price: 389.9, rarity: 'covert', color: '#ff5576', shape: 'wings' },
-    { id: 9, weapon: 'Spectral Daggers', skin: 'Night Pulse', wear: 'MW', price: 31.25, rarity: 'consumer', color: '#48bfff', shape: 'daggers' },
-    { id: 10, weapon: 'Oracle Crown', skin: 'Violet Omen', wear: 'FN', price: 76.6, rarity: 'classified', color: '#a878ff', shape: 'crown' },
-    { id: 11, weapon: 'Infernal Axe', skin: 'Molten Code', wear: 'FT', price: 164.8, rarity: 'covert', color: '#ff5576', shape: 'axe' },
-    { id: 12, weapon: 'Ancient Shield', skin: 'Emerald Guard', wear: 'MW', price: 55.3, rarity: 'classified', color: '#a878ff', shape: 'shield' }
+    { id: 1, weapon: 'Phantom Blade', skin: 'Neon Rift', wear: 'FN', price: 18.4, color: '#4bb8ff', shape: 'blade' },
+    { id: 2, weapon: 'Abyssal Hook', skin: 'Deep Current', wear: 'MW', price: 26.75, color: '#50c8ff', shape: 'hook' },
+    { id: 3, weapon: 'Dragon Lance', skin: 'Ember Scale', wear: 'FT', price: 42.1, color: '#a878ff', shape: 'lance' },
+    { id: 4, weapon: 'Arcane Staff', skin: 'Void Signal', wear: 'FN', price: 67.9, color: '#a878ff', shape: 'staff' },
+    { id: 5, weapon: 'Crimson Edge', skin: 'Blood Circuit', wear: 'MW', price: 94.5, color: '#c368ff', shape: 'blade' },
+    { id: 6, weapon: 'Celestial Bow', skin: 'Polar Light', wear: 'FN', price: 138.2, color: '#ff5576', shape: 'bow' },
+    { id: 7, weapon: 'Titan Hammer', skin: 'Solar Core', wear: 'FT', price: 215, color: '#ff5576', shape: 'hammer' },
+    { id: 8, weapon: 'Eternal Wings', skin: 'Astral Dominion', wear: 'FN', price: 389.9, color: '#ff5576', shape: 'wings' },
+    { id: 9, weapon: 'Spectral Daggers', skin: 'Night Pulse', wear: 'MW', price: 31.25, color: '#48bfff', shape: 'daggers' },
+    { id: 10, weapon: 'Oracle Crown', skin: 'Violet Omen', wear: 'FN', price: 76.6, color: '#a878ff', shape: 'crown' },
+    { id: 11, weapon: 'Infernal Axe', skin: 'Molten Code', wear: 'FT', price: 164.8, color: '#ff5576', shape: 'axe' },
+    { id: 12, weapon: 'Ancient Shield', skin: 'Emerald Guard', wear: 'MW', price: 55.3, color: '#a878ff', shape: 'shield' }
   ];
 
   const paths = {
@@ -32,6 +32,7 @@
 
   const state = {
     ownedIds: [],
+    cartIds: new Set(),
     sourceIds: new Set(),
     targetId: null,
     chance: 0,
@@ -49,6 +50,7 @@
   const itemById = id => items.find(item => item.id === Number(id));
   const ownedItems = () => state.ownedIds.map(itemById).filter(Boolean);
   const sourceTotal = () => [...state.sourceIds].reduce((sum, id) => sum + itemById(id).price, 0);
+  const cartTotal = () => [...state.cartIds].reduce((sum, id) => sum + itemById(id).price, 0);
 
   function itemArt(item) {
     return `<div class="item-art"><svg viewBox="0 0 100 75" aria-hidden="true">${paths[item.shape]}</svg></div>`;
@@ -100,38 +102,36 @@
     const query = $('#sourceSearch').value.trim().toLowerCase();
     const min = Number($('#sourceMinPrice').value) || 0;
     const max = Number($('#sourceMaxPrice').value) || Infinity;
-    const visible = ownedItems().filter(item => {
-      const matchesText = `${item.weapon} ${item.skin}`.toLowerCase().includes(query);
-      return matchesText && item.price >= min && item.price <= max;
-    });
+    const ownedVisible = ownedItems().filter(item => `${item.weapon} ${item.skin}`.toLowerCase().includes(query) && item.price >= min && item.price <= max);
 
-    $('#sourceItemsFound').textContent = visible.length;
-    $('#marketSourceTotal').textContent = money(sourceTotal());
-    $('#sourceHint').textContent = state.marketView === 'inventory' ? 'Выбери до 3 предметов' : 'Покупай предметы за баланс';
-    $('#inventoryEmptyNote').hidden = visible.length !== 0 || state.marketView !== 'inventory';
+    $('#inventoryEmptyNote').hidden = ownedVisible.length !== 0 || state.marketView !== 'inventory';
 
-    if (!visible.length && state.marketView === 'inventory') {
-      $('#sourceItemGrid').innerHTML = '<div class="no-items">Пока пусто. Переключись на магазин и купи первые скины.</div>';
+    if (!ownedVisible.length && state.marketView === 'inventory') {
+      $('#sourceItemsFound').textContent = '0';
+      $('#marketSourceTotal').textContent = money(sourceTotal());
+      $('#sourceItemGrid').innerHTML = '<div class="no-items">Пока пусто. Переключись на магазин и добавь скины в корзину.</div>';
       return;
     }
 
-    const pool = state.marketView === 'inventory' ? visible : items.filter(item => {
-      const matchesText = `${item.weapon} ${item.skin}`.toLowerCase().includes(query);
-      return matchesText && item.price >= min && item.price <= max;
-    });
+    const pool = state.marketView === 'inventory'
+      ? ownedVisible
+      : items.filter(item => `${item.weapon} ${item.skin}`.toLowerCase().includes(query) && item.price >= min && item.price <= max);
 
-    $('#sourceItemsFound').textContent = pool.length;
+    $('#sourceItemsFound').textContent = String(pool.length);
+    $('#marketSourceTotal').textContent = state.marketView === 'inventory' ? money(sourceTotal()) : money(cartTotal());
     $('#sourceItemGrid').innerHTML = pool.length ? pool.map(item => {
       const selected = state.sourceIds.has(item.id);
       const owned = state.ownedIds.includes(item.id);
-      const canBuy = state.balance >= item.price && !owned;
-      const actionLabel = state.marketView === 'inventory'
+      const queued = state.cartIds.has(item.id);
+      const canQueue = state.balance >= cartTotal() + item.price && !owned;
+      const label = state.marketView === 'inventory'
         ? (selected ? 'ВЫБРАНО' : 'ВЫБРАТЬ')
-        : (owned ? 'КУПЛЕНО' : canBuy ? 'КУПИТЬ' : 'НЕ ХВАТАЕТ');
-      return `<article class="item-card${selected && state.marketView === 'inventory' ? ' selected' : ''}${owned && state.marketView === 'store' ? ' owned' : ''}" style="--rarity:${item.color}" data-item-id="${item.id}" data-item-mode="${state.marketView}">
+        : (owned ? 'КУПЛЕНО' : queued ? 'В КОРЗИНЕ' : canQueue ? 'В КОРЗИНУ' : 'НЕ ХВАТАЕТ');
+      return `<article class="item-card${selected && state.marketView === 'inventory' ? ' selected' : ''}${owned && state.marketView === 'store' ? ' owned' : ''}${queued && state.marketView === 'store' ? ' queued' : ''}" style="--rarity:${item.color}" data-item-id="${item.id}">
         <div class="item-badges"><span class="wear">${item.wear}</span><i class="rarity-dot"></i></div>
+        ${state.marketView === 'store' ? `<button class="cart-corner${queued ? ' active' : ''}" type="button" data-cart-toggle="${item.id}" aria-label="Корзина">🛒</button>` : ''}
         ${itemArt(item)}<span class="item-name">${item.weapon}</span><strong class="item-skin">${item.skin}</strong>
-        <div class="item-footer"><span class="item-price">${money(item.price)}</span><button class="select-item" type="button" ${state.marketView === 'store' && !canBuy && !owned ? 'disabled' : ''}>${actionLabel}</button></div>
+        <div class="item-footer"><span class="item-price">${money(item.price)}</span><button class="select-item" type="button" ${state.marketView === 'store' && !owned && !queued && !canQueue ? 'disabled' : ''}>${label}</button></div>
       </article>`;
     }).join('') : '<div class="no-items">По заданным фильтрам предметы не найдены.</div>';
   }
@@ -141,17 +141,12 @@
     const min = Number($('#targetMinPrice').value) || 0;
     const max = Number($('#targetMaxPrice').value) || Infinity;
     const total = sourceTotal();
-    const visible = items.filter(item => {
-      const matchesText = `${item.weapon} ${item.skin}`.toLowerCase().includes(query);
-      const matchesPrice = item.price >= min && item.price <= max;
-      const validTarget = item.price > Math.max(total, 0);
-      return matchesText && matchesPrice && validTarget;
-    });
-    $('#targetItemsFound').textContent = visible.length;
+    const visible = items.filter(item => `${item.weapon} ${item.skin}`.toLowerCase().includes(query) && item.price >= min && item.price <= max && item.price > Math.max(total, 0));
+    $('#targetItemsFound').textContent = String(visible.length);
     $('#marketTargetPrice').textContent = state.targetId ? money(itemById(state.targetId).price) : '$0.00';
     $('#targetItemGrid').innerHTML = visible.length ? visible.map(item => {
       const selected = state.targetId === item.id;
-      return `<article class="item-card${selected ? ' selected' : ''}" style="--rarity:${item.color}" data-item-id="${item.id}" data-item-mode="target">
+      return `<article class="item-card${selected ? ' selected' : ''}" style="--rarity:${item.color}" data-item-id="${item.id}">
         <div class="item-badges"><span class="wear">${item.wear}</span><i class="rarity-dot"></i></div>
         ${itemArt(item)}<span class="item-name">${item.weapon}</span><strong class="item-skin">${item.skin}</strong>
         <div class="item-footer"><span class="item-price">${money(item.price)}</span><button class="select-item" type="button">${selected ? 'ВЫБРАНО' : 'ЦЕЛЬ'}</button></div>
@@ -167,20 +162,36 @@
   function setMarketView(view) {
     state.marketView = view;
     $$('[data-source-view]').forEach(button => button.classList.toggle('active', button.dataset.sourceView === view));
+    $('#purchaseCartButton').hidden = view !== 'store';
     renderGrid();
   }
 
-  function buyItem(id) {
+  function toggleCartItem(id) {
     const item = itemById(id);
     if (!item) return;
     if (state.ownedIds.includes(id)) return showToast('Этот скин уже куплен', 'error');
-    if (state.balance < item.price) return showToast('Недостаточно баланса', 'error');
-    state.balance -= item.price;
-    state.ownedIds.push(id);
+    if (state.cartIds.has(id)) state.cartIds.delete(id);
+    else {
+      if (state.balance < cartTotal() + item.price) return showToast('Недостаточно баланса для корзины', 'error');
+      state.cartIds.add(id);
+    }
+    renderGrid();
+  }
+
+  function purchaseCart() {
+    const ids = [...state.cartIds];
+    if (!ids.length) return showToast('Корзина пуста', 'error');
+    const total = cartTotal();
+    if (state.balance < total) return showToast('Недостаточно баланса', 'error');
+    state.balance -= total;
+    ids.forEach(id => {
+      if (!state.ownedIds.includes(id)) state.ownedIds.push(id);
+    });
+    state.cartIds.clear();
     updateBalance();
     renderGrid();
     renderSelection();
-    showToast(`Куплен ${item.skin}`, 'success');
+    showToast(`Куплено предметов: ${ids.length}`, 'success');
   }
 
   function selectInventoryItem(id) {
@@ -302,10 +313,15 @@
   }
 
   $('#sourceItemGrid').addEventListener('click', event => {
+    const cartButton = event.target.closest('[data-cart-toggle]');
+    if (cartButton) {
+      toggleCartItem(Number(cartButton.dataset.cartToggle));
+      return;
+    }
     const card = event.target.closest('.item-card');
     if (!card) return;
     const id = Number(card.dataset.itemId);
-    if (state.marketView === 'store') buyItem(id);
+    if (state.marketView === 'store') toggleCartItem(id);
     else selectInventoryItem(id);
   });
 
@@ -328,7 +344,6 @@
     renderSelection();
     renderGrid();
   });
-
   $('#randomTarget').addEventListener('click', () => {
     const candidates = items.filter(item => item.price > sourceTotal());
     if (!state.sourceIds.size || !candidates.length) return showToast('Сначала выбери предметы из инвентаря', 'error');
@@ -341,21 +356,19 @@
     $$('.market-mobile-tabs button').forEach(item => item.classList.toggle('active', item === button));
     $$('[data-market-pane]').forEach(pane => pane.classList.toggle('active-mobile-market', pane.dataset.marketPane === button.dataset.marketTab));
   }));
-
   $$('.source-view-switch button').forEach(button => button.addEventListener('click', () => setMarketView(button.dataset.sourceView)));
+  $('#purchaseCartButton').addEventListener('click', purchaseCart);
   $$('.multiplier-row button').forEach(button => button.addEventListener('click', () => chooseTargetForChance(Number(button.dataset.chance))));
   $$('.speed-switch button').forEach(button => button.addEventListener('click', () => {
     state.spinDuration = button.dataset.speed === 'fast' ? 1000 : 4000;
     $$('.speed-switch button').forEach(item => item.classList.toggle('active', item === button));
   }));
-
   $('#chanceSettingsButton').addEventListener('click', () => {
     const editor = $('#chanceEditor');
     const open = editor.classList.toggle('open');
     editor.setAttribute('aria-hidden', String(!open));
     $('#chanceSettingsButton').setAttribute('aria-expanded', String(open));
   });
-
   $('#saveChancePresets').addEventListener('click', () => {
     const values = $$('[data-chance-input]').map(input => Number(input.value));
     if (values.some(value => !Number.isFinite(value) || value < 1 || value > 95)) return showToast('Укажи проценты от 1 до 95', 'error');
@@ -366,17 +379,14 @@
     $('#chanceSettingsButton').setAttribute('aria-expanded', 'false');
     showToast('Кнопки процентов сохранены', 'success');
   });
-
   $$('.mode-switch button').forEach(button => button.addEventListener('click', () => {
     state.mode = button.dataset.mode;
     $$('.mode-switch button').forEach(item => item.classList.toggle('active', item === button));
   }));
-
   $$('.mobile-tabs button').forEach(button => button.addEventListener('click', () => {
     $$('.mobile-tabs button').forEach(item => item.classList.toggle('active', item === button));
     $$('[data-mobile-panel]').forEach(panel => panel.classList.toggle('active-mobile', panel.dataset.mobilePanel === button.dataset.mobileTab));
   }));
-
   $$('[data-modal-open]').forEach(button => button.addEventListener('click', () => openModal(button.dataset.modalOpen)));
   $$('[data-modal-close]').forEach(button => button.addEventListener('click', () => closeModal(button.closest('.modal'))));
   document.addEventListener('keydown', event => { if (event.key === 'Escape') $$('.modal.open').forEach(closeModal); });

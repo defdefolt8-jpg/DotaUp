@@ -125,7 +125,7 @@
       <div class="dual-market">
         <section class="market-pane active-mobile-market" data-market-pane="source">
           <div class="market-toolbar">
-            <div class="market-title"><span class="market-icon">▣</span><div><small>ТВОИ ПРЕДМЕТЫ</small><h2>Инвентарь и магазин</h2></div><b id="sourceItemsFound">0</b></div>
+            <div class="market-title"><span class="market-icon">▣</span><div><h2>Инвентарь</h2></div><b id="sourceItemsFound">0</b></div>
             <div class="source-view-switch">
               <button class="active" type="button" data-source-view="inventory">Инвентарь</button>
               <button type="button" data-source-view="store">Магазин</button>
@@ -136,14 +136,14 @@
               <label class="price-filter"><span>до</span><input id="sourceMaxPrice" type="number" min="0" placeholder="∞"></label>
             </div>
           </div>
-          <div class="market-summary"><span id="sourceHint">Выбери до 3 предметов</span><strong id="marketSourceTotal">$0.00</strong></div>
+          <div class="market-summary"><strong id="marketSourceTotal">$0.00</strong><button class="purchase-cart-button" id="purchaseCartButton" type="button" hidden>🛒 Купить</button></div>
           <div class="market-empty-note" id="inventoryEmptyNote">Сейчас у тебя нет ни одного скина в инвентаре.</div>
           <div class="market-grid" id="sourceItemGrid"></div>
         </section>
 
         <section class="market-pane" data-market-pane="target">
           <div class="market-toolbar">
-            <div class="market-title"><span class="market-icon upgrade-icon">◆</span><div><small>КАТАЛОГ НАГРАД</small><h2>Выбери скин</h2></div><b id="targetItemsFound">0</b></div>
+            <div class="market-title"><span class="market-icon upgrade-icon">◆</span><div><h2>Выбери скин</h2></div><b id="targetItemsFound">0</b></div>
             <div class="market-filters">
               <label class="compact-search"><input id="targetSearch" type="search" placeholder="Поиск" autocomplete="off"><span>⌕</span></label>
               <label class="price-filter"><span>Цена от</span><input id="targetMinPrice" type="number" min="0" placeholder="$0"></label>
