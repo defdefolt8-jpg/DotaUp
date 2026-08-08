@@ -2,18 +2,26 @@
   'use strict';
 
   const items = [
-    { id: 1, weapon: 'Phantom Blade', skin: 'Neon Rift', wear: 'FN', price: 18.4, color: '#4bb8ff', shape: 'blade' },
-    { id: 2, weapon: 'Abyssal Hook', skin: 'Deep Current', wear: 'MW', price: 26.75, color: '#50c8ff', shape: 'hook' },
-    { id: 3, weapon: 'Dragon Lance', skin: 'Ember Scale', wear: 'FT', price: 42.1, color: '#a878ff', shape: 'lance' },
-    { id: 4, weapon: 'Arcane Staff', skin: 'Void Signal', wear: 'FN', price: 67.9, color: '#a878ff', shape: 'staff' },
-    { id: 5, weapon: 'Crimson Edge', skin: 'Blood Circuit', wear: 'MW', price: 94.5, color: '#c368ff', shape: 'blade' },
-    { id: 6, weapon: 'Celestial Bow', skin: 'Polar Light', wear: 'FN', price: 138.2, color: '#ff5576', shape: 'bow' },
-    { id: 7, weapon: 'Titan Hammer', skin: 'Solar Core', wear: 'FT', price: 215, color: '#ff5576', shape: 'hammer' },
-    { id: 8, weapon: 'Eternal Wings', skin: 'Astral Dominion', wear: 'FN', price: 389.9, color: '#ff5576', shape: 'wings' },
-    { id: 9, weapon: 'Spectral Daggers', skin: 'Night Pulse', wear: 'MW', price: 31.25, color: '#48bfff', shape: 'daggers' },
-    { id: 10, weapon: 'Oracle Crown', skin: 'Violet Omen', wear: 'FN', price: 76.6, color: '#a878ff', shape: 'crown' },
-    { id: 11, weapon: 'Infernal Axe', skin: 'Molten Code', wear: 'FT', price: 164.8, color: '#ff5576', shape: 'axe' },
-    { id: 12, weapon: 'Ancient Shield', skin: 'Emerald Guard', wear: 'MW', price: 55.3, color: '#a878ff', shape: 'shield' }
+    { id: 1, weapon: 'Treasure', skin: 'Frostivus 2023 Treasure Chest', wear: 'Base', price: 0.06, color: '#47c8ff', shape: 'shield', imageLabel: 'Frostivus', imageAccent: '#47c8ff' },
+    { id: 2, weapon: 'Treasure', skin: 'Dead Reckoning Chest', wear: 'Base', price: 0.29, color: '#57d3ff', shape: 'crown', imageLabel: 'Reckoning', imageAccent: '#57d3ff' },
+    { id: 3, weapon: 'Collector Cache', skin: 'Spina Infernalis', wear: 'Base', price: 0.22, color: '#7f8fff', shape: 'axe', imageLabel: 'Inferno', imageAccent: '#7f8fff' },
+    { id: 4, weapon: 'World Item', skin: 'Crownfall - Dire Creeps', wear: 'Base', price: 0.63, color: '#ff7a59', shape: 'daggers', imageLabel: 'Dire', imageAccent: '#ff7a59' },
+    { id: 5, weapon: 'World Item', skin: 'Crownfall - Radiant Creeps', wear: 'Base', price: 0.87, color: '#8dfc52', shape: 'wings', imageLabel: 'Radiant', imageAccent: '#8dfc52' },
+    { id: 6, weapon: 'Immortal', skin: 'Immortal Treasure I 2022', wear: 'Base', price: 1.3, color: '#8dfc52', shape: 'crown', imageLabel: 'Immortal', imageAccent: '#8dfc52' },
+    { id: 7, weapon: 'Terrain', skin: 'Stoneclaw Scavengers Dire Towers', wear: 'Base', price: 1.76, color: '#ff8a38', shape: 'hammer', imageLabel: 'Dire', imageAccent: '#ff8a38' },
+    { id: 8, weapon: 'Terrain', skin: 'Stoneclaw Scavengers Radiant Towers', wear: 'Base', price: 1.77, color: '#6dffb7', shape: 'staff', imageLabel: 'Radiant', imageAccent: '#6dffb7' },
+    { id: 9, weapon: 'Anti-Mage', skin: 'Mantle of the Whispered Bond', wear: 'Base', price: 2.09, color: '#8c74ff', shape: 'blade', imageLabel: 'AM', imageAccent: '#8c74ff' },
+    { id: 10, weapon: 'Invoker', skin: 'Magus Apex', wear: 'Arcana', price: 2.95, color: '#a878ff', shape: 'staff', imageLabel: 'Invoker', imageAccent: '#a878ff' },
+    { id: 11, weapon: 'Rubick', skin: 'Crux of Perplex', wear: 'Immortal', price: 5.0, color: '#58f4c8', shape: 'staff', imageLabel: 'Rubick', imageAccent: '#58f4c8' },
+    { id: 12, weapon: 'Shadow Fiend', skin: 'Arms of Desolation', wear: 'Immortal', price: 8.97, color: '#ff5576', shape: 'axe', imageLabel: 'SF', imageAccent: '#ff5576' },
+    { id: 13, weapon: 'Juggernaut', skin: 'Origins of Faith', wear: 'Immortal', price: 11.55, color: '#ffd36b', shape: 'blade', imageLabel: 'Jugg', imageAccent: '#ffd36b' },
+    { id: 14, weapon: 'Dragon Knight', skin: 'The Devotions of Dragonus - Wings', wear: 'Mythical', price: 18.47, color: '#ff8c5a', shape: 'wings', imageLabel: 'DK', imageAccent: '#ff8c5a' },
+    { id: 15, weapon: 'Phantom Assassin', skin: 'Manifold Paradox', wear: 'Arcana', price: 24.24, color: '#48bfff', shape: 'daggers', imageLabel: 'PA', imageAccent: '#48bfff', image: 'https://community.akamai.steamstatic.com/economy/image/QifztM4jTRrENf7LQ1M1h6-lJfGtuM8UIgRHVY7WmQExQUo-lCe3QG6XYvO_3pD5UI5hUlQ7nF8U5uoD2Ublfqh8f7ug3lWm5RDc4YUwjdCioFBmsXoo_W5n3P4w7KzVY-lFuA/330x192' },
+    { id: 16, weapon: 'Shadow Fiend', skin: 'Demon Eater', wear: 'Arcana', price: 25.55, color: '#ff5576', shape: 'axe', imageLabel: 'SF', imageAccent: '#ff5576', image: 'https://community.akamai.steamstatic.com/economy/image/IEkBqta5z6iokJzddPtiRd7IO7aI38FE6fZEu_uFfMYVVnq1DaK5QAL6XYb0m5muNt2fygcdwISuB6JSsDI2ap-nP7nQ2Efk6s2SyHCbaV6eQaKnBww5-pI9stirIQ/330x192' },
+    { id: 17, weapon: 'Juggernaut', skin: 'Exalted Bladeform Legacy', wear: 'Arcana', price: 26.45, color: '#ffcf66', shape: 'blade', imageLabel: 'Jugg', imageAccent: '#ffcf66' },
+    { id: 18, weapon: 'Terrorblade', skin: 'Fractal Horns of Inner Abysm', wear: 'Arcana', price: 34.97, color: '#7cf2ff', shape: 'crown', imageLabel: 'TB', imageAccent: '#7cf2ff' },
+    { id: 19, weapon: 'Invoker', skin: 'Dark Artistry Cape', wear: 'Mythical', price: 194.95, color: '#9c6cff', shape: 'wings', imageLabel: 'Invoker', imageAccent: '#9c6cff', image: 'https://community.akamai.steamstatic.com/economy/image/UgG2rj5Qw1PtF4AZbx8n8Y5m3JZbJX64FdL1dQc6Y0nNh0s9cMNdH3GgloJrRzQ2S-vKVl02QG7Wm3SeQp0d8Q/330x192' },
+    { id: 20, weapon: 'Pudge', skin: 'Dragonclaw Hook', wear: 'Legendary', price: 351.95, color: '#ff7a59', shape: 'hook', imageLabel: 'Pudge', imageAccent: '#ff7a59' }
   ];
 
   const paths = {
@@ -63,7 +71,16 @@
   const cartTotal = () => [...state.cartIds].reduce((sum, id) => sum + itemById(id).price, 0);
 
   function itemArt(item) {
-    return `<div class="item-art"><svg viewBox="0 0 100 75" aria-hidden="true">${paths[item.shape]}</svg></div>`;
+    if (item.image) {
+      return `<div class="item-art item-art-image"><img src="${item.image}" alt="${item.skin}" loading="lazy"></div>`;
+    }
+    return `<div class="item-art item-art-poster" style="--accent:${item.imageAccent || item.color}">
+      <div class="item-poster-glow"></div>
+      <div class="item-poster-top">${item.weapon}</div>
+      <div class="item-poster-symbol">${item.imageLabel || item.skin.slice(0, 2)}</div>
+      <div class="item-poster-bottom">${item.skin}</div>
+      <svg viewBox="0 0 100 75" aria-hidden="true">${paths[item.shape]}</svg>
+    </div>`;
   }
 
   function timestampLabel() {
