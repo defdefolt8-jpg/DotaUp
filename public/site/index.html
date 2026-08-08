@@ -87,13 +87,12 @@
           </div>
 
           <div class="chance-control">
-            <div><label for="chanceSlider">Ручной шанс</label><output id="chanceOutput">35%</output></div>
-            <input id="chanceSlider" type="range" min="5" max="80" value="35" step="1">
+            <div class="auto-chance-head"><span>Автоматический шанс</span><small>Зависит от стоимости скина</small></div>
             <div class="multiplier-row">
-              <button type="button" data-multiplier="2">x2</button>
-              <button class="active" type="button" data-multiplier="3">x3</button>
-              <button type="button" data-multiplier="5">x5</button>
-              <button type="button" data-multiplier="10">x10</button>
+              <button type="button" data-chance="60">60%</button>
+              <button class="active" type="button" data-chance="45">45%</button>
+              <button type="button" data-chance="30">30%</button>
+              <button type="button" data-chance="15">15%</button>
             </div>
           </div>
         </section>

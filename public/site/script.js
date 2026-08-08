@@ -30,7 +30,7 @@
     shield: '<path d="M50 6 87 20v17c0 23-17 33-37 40-20-7-37-17-37-40V20Z"/><path d="M50 17v47M25 31h50"/>'
   };
 
-  const state = { sourceIds: new Set(), targetId: null, gridMode: 'source', chance: 35, multiplier: 3, mode: 'under', spinning: false, balance: 1250 };
+  const state = { sourceIds: new Set(), targetId: null, chance: 45, mode: 'under', spinning: false, balance: 1250 };
   const $ = (selector, root = document) => root.querySelector(selector);
   const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
   const money = value => `$${value.toFixed(2)}`;
@@ -99,6 +99,7 @@
     $('#targetMultiplier').textContent = target && sourceTotal() ? `x${(target.price / sourceTotal()).toFixed(2)}` : '—';
     $('#upgradeCost').textContent = target && selected.length ? `${money(sourceTotal())} → ${money(target.price)}` : 'Выбери предметы';
     if (!state.spinning) $('#resultMessage').textContent = target && selected.length ? 'Терминал готов к запуску' : 'Выбери предметы для апгрейда';
+    syncChanceToSelection();
   }
 
   function selectItem(mode, id) {
@@ -115,14 +116,30 @@
   }
 
   function updateChance(value) {
-    state.chance = Number(value);
+    state.chance = Math.max(0, Math.min(95, Number(value)));
     $('#chanceValue').textContent = state.chance.toFixed(2);
-    $('#chanceOutput').textContent = `${state.chance}%`;
     $('#chanceCircle').style.strokeDasharray = `${state.chance} 100`;
     $('#radarPointer').style.transform = `rotate(${state.chance * 3.6}deg)`;
-    const slider = $('#chanceSlider');
-    const progress = ((state.chance - Number(slider.min)) / (Number(slider.max) - Number(slider.min))) * 100;
-    slider.style.background = `linear-gradient(90deg,var(--green) ${progress}%,#303642 ${progress}%)`;
+    const presets = $$('.multiplier-row button');
+    const nearest = presets.reduce((best, button) => Math.abs(Number(button.dataset.chance) - state.chance) < Math.abs(Number(best.dataset.chance) - state.chance) ? button : best, presets[0]);
+    presets.forEach(button => button.classList.toggle('active', button === nearest));
+  }
+
+  function syncChanceToSelection() {
+    const target = itemById(state.targetId);
+    updateChance(target && sourceTotal() ? (sourceTotal() / target.price) * 100 : 0);
+  }
+
+  function chooseTargetForChance(desiredChance) {
+    const total = sourceTotal();
+    if (!total) return showToast('Сначала выбери предметы из инвентаря', 'error');
+    const desiredPrice = total * 100 / desiredChance;
+    const candidates = items.filter(item => item.price > total);
+    if (!candidates.length) return showToast('Подходящих скинов пока нет', 'error');
+    state.targetId = candidates.reduce((best, item) => Math.abs(item.price - desiredPrice) < Math.abs(best.price - desiredPrice) ? item : best, candidates[0]).id;
+    renderSelection();
+    renderGrid();
+    showToast(`Подобран ближайший скин под шанс ${desiredChance}%`, 'success');
   }
 
   function runUpgrade() {
@@ -178,7 +195,6 @@
   });
   ['sourceSearch', 'sourceMinPrice', 'sourceMaxPrice', 'targetSearch', 'targetMinPrice', 'targetMaxPrice']
     .forEach(id => $(`#${id}`).addEventListener('input', renderGrid));
-  $('#chanceSlider').addEventListener('input', event => updateChance(event.target.value));
   $('#upgradeButton').addEventListener('click', runUpgrade);
   $('#clearSelection').addEventListener('click', () => { state.sourceIds.clear(); renderSelection(); renderGrid(); });
   $('#randomTarget').addEventListener('click', () => {
@@ -191,12 +207,7 @@
     $$('.market-mobile-tabs button').forEach(item => item.classList.toggle('active', item === button));
     $$('[data-market-pane]').forEach(pane => pane.classList.toggle('active-mobile-market', pane.dataset.marketPane === button.dataset.marketTab));
   }));
-  $$('.multiplier-row button').forEach(button => button.addEventListener('click', () => {
-    state.multiplier = Number(button.dataset.multiplier);
-    $$('.multiplier-row button').forEach(item => item.classList.toggle('active', item === button));
-    updateChance(Math.max(5, Math.round(100 / state.multiplier)));
-    $('#chanceSlider').value = state.chance;
-  }));
+  $$('.multiplier-row button').forEach(button => button.addEventListener('click', () => chooseTargetForChance(Number(button.dataset.chance))));
   $$('.mode-switch button').forEach(button => button.addEventListener('click', () => {
     state.mode = button.dataset.mode;
     $$('.mode-switch button').forEach(item => item.classList.toggle('active', item === button));
