@@ -163,16 +163,19 @@
   function runUpgrade() {
     if (state.spinning) return;
     if (!state.sourceIds.size || !state.targetId) return showToast('Выбери исходный и целевой предмет', 'error');
+    const roll = Math.random() * 100;
+    const extraTurns = state.spinDuration === 1000 ? 3 : 6;
+    const endAngle = extraTurns * 360 + (roll * 3.6);
     state.spinning = true;
     $('#upgradeButton').disabled = true;
     $('#radarWrap').classList.remove('spinning');
     $('#radarWrap').style.setProperty('--spin-duration', `${state.spinDuration}ms`);
+    $('#radarWrap').style.setProperty('--spin-end', `${endAngle}deg`);
     void $('#radarWrap').offsetWidth;
     $('#radarWrap').classList.add('spinning');
     $('#resultMessage').className = 'result-message';
     $('#resultMessage').textContent = 'Проверяем результат…';
     setTimeout(() => {
-      const roll = Math.random() * 100;
       const win = state.mode === 'under' ? roll <= state.chance : roll >= 100 - state.chance;
       $('#resultMessage').className = `result-message ${win ? 'win' : 'lose'}`;
       $('#resultMessage').textContent = win ? `УСПЕХ · выпало ${roll.toFixed(2)}` : `НЕУДАЧА · выпало ${roll.toFixed(2)}`;
@@ -180,7 +183,7 @@
       state.spinning = false;
       $('#upgradeButton').disabled = false;
       $('#radarWrap').classList.remove('spinning');
-      $('#radarPointer').style.transform = `rotate(${roll * 3.6}deg)`;
+      $('#radarPointer').style.transform = 'rotate(0deg)';
     }, state.spinDuration);
   }
 
