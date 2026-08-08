@@ -42,7 +42,16 @@
     chancePresets: [60, 45, 30, 15],
     balance: 1250,
     marketView: 'inventory',
-    isLoggedIn: false
+    isLoggedIn: false,
+    profileTab: 'inventory',
+    user: {
+      name: 'DemoInvoker',
+      steamId: 'ID 602197',
+      level: 27,
+      bestDropId: 8
+    },
+    itemHistory: [],
+    gameHistory: []
   };
 
   const $ = (selector, root = document) => root.querySelector(selector);
@@ -57,24 +66,14 @@
     return `<div class="item-art"><svg viewBox="0 0 100 75" aria-hidden="true">${paths[item.shape]}</svg></div>`;
   }
 
+  function timestampLabel() {
+    return new Date().toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+  }
+
   function updateBalance() {
     $$('#balanceValue').forEach(node => { node.textContent = money(state.balance); });
-  }
-
-  function updateAuthUI() {
-    const loginButton = $('.steam-button');
-    if (!loginButton) return;
-    loginButton.classList.toggle('is-authenticated', state.isLoggedIn);
-    $('span', loginButton).textContent = state.isLoggedIn ? 'Steam подключен' : 'Войти через Steam';
-    $('#upgradeButton').disabled = !state.isLoggedIn || state.spinning;
-    $('#purchaseCartButton').disabled = !state.isLoggedIn;
-  }
-
-  function requireAuth() {
-    if (state.isLoggedIn) return true;
-    openModal('loginModal');
-    showToast('Сначала войди в аккаунт Steam', 'error');
-    return false;
+    const profileBalance = $('#profileBalanceValue');
+    if (profileBalance) profileBalance.textContent = money(state.balance);
   }
 
   function renderLive() {
@@ -94,6 +93,23 @@
     return `<div class="selected-row" style="--rarity:${item.color}">${itemArt(item)}<span><strong>${item.skin}</strong><small>${item.weapon} · ${item.wear}</small></span><b>${money(item.price)}</b></div>`;
   }
 
+  function updateAuthUI() {
+    $('.steam-button')?.classList.toggle('hidden-auth', state.isLoggedIn);
+    $('.profile-chip')?.classList.toggle('show', state.isLoggedIn);
+    if ($('#upgradeButton')) $('#upgradeButton').disabled = !state.isLoggedIn || state.spinning;
+    if ($('#purchaseCartButton')) $('#purchaseCartButton').disabled = !state.isLoggedIn;
+    if ($('#profileName')) $('#profileName').textContent = state.user.name;
+    if ($('#profileSteamId')) $('#profileSteamId').textContent = state.user.steamId;
+    if ($('#profileLevel')) $('#profileLevel').textContent = `LVL ${state.user.level}`;
+  }
+
+  function requireAuth() {
+    if (state.isLoggedIn) return true;
+    openModal('loginModal');
+    showToast('Сначала войди в аккаунт Steam', 'error');
+    return false;
+  }
+
   function renderSelection() {
     const selected = [...state.sourceIds].map(itemById);
     $('#selectedSources').innerHTML = selected.length
@@ -111,11 +127,9 @@
     $('#targetPrice').textContent = target ? money(target.price) : '$0.00';
     $('#targetMultiplier').textContent = target && sourceTotal() ? `x${(target.price / sourceTotal()).toFixed(2)}` : '—';
     $('#upgradeCost').textContent = target && selected.length ? `${money(sourceTotal())} → ${money(target.price)}` : 'Собери инвентарь и выбери цель';
-    if (!state.spinning) {
-      $('#resultMessage').textContent = !state.isLoggedIn
-        ? 'Войди в Steam, чтобы начать апгрейды'
-        : target && selected.length ? 'Терминал готов к запуску' : 'Выбери предметы для апгрейда';
-    }
+    if (!state.spinning) $('#resultMessage').textContent = !state.isLoggedIn
+      ? 'Войди в Steam, чтобы начать апгрейды'
+      : target && selected.length ? 'Терминал готов к запуску' : 'Выбери предметы для апгрейда';
     syncChanceToSelection();
     updateAuthUI();
   }
@@ -125,7 +139,6 @@
     const min = Number($('#sourceMinPrice').value) || 0;
     const max = Number($('#sourceMaxPrice').value) || Infinity;
     const ownedVisible = ownedItems().filter(item => `${item.weapon} ${item.skin}`.toLowerCase().includes(query) && item.price >= min && item.price <= max);
-
     $('#inventoryEmptyNote').hidden = ownedVisible.length !== 0 || state.marketView !== 'inventory';
 
     if (!ownedVisible.length && state.marketView === 'inventory') {
@@ -215,6 +228,7 @@
     updateBalance();
     renderGrid();
     renderSelection();
+    renderProfile();
     showToast(`Куплено предметов: ${ids.length}`, 'success');
   }
 
@@ -279,7 +293,17 @@
   function settleInventoryAfterUpgrade(win) {
     const spentIds = [...state.sourceIds];
     state.ownedIds = state.ownedIds.filter(id => !spentIds.includes(id));
-    if (win && state.targetId && !state.ownedIds.includes(state.targetId)) state.ownedIds.push(state.targetId);
+    if (win && state.targetId && !state.ownedIds.includes(state.targetId)) {
+      state.ownedIds.push(state.targetId);
+      const wonItem = itemById(state.targetId);
+      state.itemHistory.unshift({
+        id: `win-${Date.now()}`,
+        itemId: wonItem.id,
+        price: wonItem.price,
+        status: 'Выигран',
+        at: timestampLabel()
+      });
+    }
     state.sourceIds.clear();
     state.targetId = null;
   }
@@ -288,6 +312,9 @@
     if (!requireAuth()) return;
     if (state.spinning) return;
     if (!state.sourceIds.size || !state.targetId) return showToast('Выбери исходный и целевой предмет', 'error');
+    const stake = sourceTotal();
+    const chanceAtStart = state.chance;
+    const targetAtStart = itemById(state.targetId);
     const roll = Math.random() * 100;
     const extraTurns = state.spinDuration === 1000 ? 3 : 6;
     const endAngle = extraTurns * 360 + (roll * 3.6);
@@ -302,9 +329,19 @@
     $('#resultMessage').textContent = 'Проверяем результат…';
     setTimeout(() => {
       const win = state.mode === 'under' ? roll <= state.chance : roll >= 100 - state.chance;
+      state.gameHistory.unshift({
+        id: `game-${Date.now()}`,
+        targetId: targetAtStart.id,
+        targetSkin: targetAtStart.skin,
+        chance: chanceAtStart,
+        stake,
+        roll,
+        result: win ? 'Выигрыш' : 'Проигрыш',
+        at: timestampLabel()
+      });
       $('#resultMessage').className = `result-message ${win ? 'win' : 'lose'}`;
       $('#resultMessage').textContent = win ? `УСПЕХ · выпало ${roll.toFixed(2)}` : `НЕУДАЧА · выпало ${roll.toFixed(2)}`;
-      showToast(win ? `Апгрейд успешен: ${itemById(state.targetId).skin}` : 'Апгрейд не прошёл. Исходные предметы списаны.', win ? 'success' : 'error');
+      showToast(win ? `Апгрейд успешен: ${targetAtStart.skin}` : 'Апгрейд не прошёл. Исходные предметы списаны.', win ? 'success' : 'error');
       settleInventoryAfterUpgrade(win);
       state.spinning = false;
       $('#upgradeButton').disabled = false;
@@ -312,7 +349,96 @@
       $('#radarPointer').style.transform = 'rotate(0deg)';
       renderSelection();
       renderGrid();
+      renderProfile();
     }, state.spinDuration);
+  }
+
+  function sellItem(id) {
+    const item = itemById(id);
+    if (!item || !state.ownedIds.includes(id)) return;
+    state.ownedIds = state.ownedIds.filter(value => value !== id);
+    state.sourceIds.delete(id);
+    if (state.targetId === id) state.targetId = null;
+    state.balance += item.price;
+    updateBalance();
+    renderSelection();
+    renderGrid();
+    renderProfile();
+    showToast(`Продан ${item.skin}`, 'success');
+  }
+
+  function sellAllItems() {
+    if (!state.ownedIds.length) return showToast('Инвентарь пуст', 'error');
+    const total = ownedItems().reduce((sum, item) => sum + item.price, 0);
+    state.ownedIds = [];
+    state.sourceIds.clear();
+    state.targetId = null;
+    state.balance += total;
+    updateBalance();
+    renderSelection();
+    renderGrid();
+    renderProfile();
+    showToast(`Продано всё на ${money(total)}`, 'success');
+  }
+
+  function withdrawItem(id) {
+    const item = itemById(id);
+    if (!item || !state.ownedIds.includes(id)) return;
+    showToast(`Демо-вывод ${item.skin} в Steam`, 'success');
+  }
+
+  function renderProfileInventory() {
+    const itemsOwned = ownedItems();
+    $('#profileInventoryCount').textContent = String(itemsOwned.length);
+    $('#profileItemHistoryCount').textContent = String(state.itemHistory.length);
+    $('#profileGameHistoryCount').textContent = String(state.gameHistory.length);
+    $('#profileSoldValue').textContent = money(0);
+    $('#profileUpgradeCount').textContent = String(state.gameHistory.length);
+    const bestDrop = itemById(state.user.bestDropId);
+    if (bestDrop) {
+      $('#profileBestDrop').innerHTML = `<div class="profile-drop-card" style="--rarity:${bestDrop.color}">${itemArt(bestDrop)}<div><strong>${bestDrop.skin}</strong><span>${bestDrop.weapon}</span><b>${money(bestDrop.price)}</b></div></div>`;
+    }
+    $('#profileInventoryGrid').innerHTML = itemsOwned.length ? itemsOwned.map(item => `
+      <article class="profile-item-card" style="--rarity:${item.color}">
+        <div class="profile-item-top"><span>${money(item.price)}</span><small>${item.wear}</small></div>
+        ${itemArt(item)}
+        <strong>${item.skin}</strong>
+        <span>${item.weapon}</span>
+        <div class="profile-item-actions">
+          <button type="button" data-sell-item="${item.id}">Продать</button>
+          <button type="button" data-withdraw-item="${item.id}">Вывести в Steam</button>
+        </div>
+      </article>`).join('') : '<div class="profile-empty">У вас пока нет предметов</div>';
+  }
+
+  function renderProfileHistory() {
+    $('#profileItemHistoryGrid').innerHTML = state.itemHistory.length ? state.itemHistory.map(entry => {
+      const item = itemById(entry.itemId);
+      return `<article class="profile-history-card" style="--rarity:${item.color}">
+        <div class="profile-history-price">${money(entry.price)}</div>
+        ${itemArt(item)}
+        <strong>${entry.status}</strong>
+        <span>${item.skin}</span>
+        <small>${entry.at}</small>
+      </article>`;
+    }).join('') : '<div class="profile-empty">История предметов пока пуста</div>';
+
+    $('#profileGamesList').innerHTML = state.gameHistory.length ? state.gameHistory.map(game => `
+      <article class="profile-game-row ${game.result === 'Выигрыш' ? 'win' : 'lose'}">
+        <div><strong>${game.result}</strong><span>${game.targetSkin}</span></div>
+        <div><strong>${game.chance.toFixed(2)}%</strong><span>Шанс</span></div>
+        <div><strong>${money(game.stake)}</strong><span>Ставка</span></div>
+        <div><strong>${game.roll.toFixed(2)}</strong><span>Выпало</span></div>
+        <div><strong>${game.at}</strong><span>Время</span></div>
+      </article>`).join('') : '<div class="profile-empty">История игр пока пуста</div>';
+  }
+
+  function renderProfile() {
+    renderProfileInventory();
+    renderProfileHistory();
+    $$('[data-profile-tab]').forEach(button => button.classList.toggle('active', button.dataset.profileTab === state.profileTab));
+    $$('[data-profile-panel]').forEach(panel => panel.hidden = panel.dataset.profilePanel !== state.profileTab);
+    updateBalance();
   }
 
   let toastTimer;
@@ -360,6 +486,13 @@
     state.targetId = Number(card.dataset.itemId);
     renderSelection();
     renderGrid();
+  });
+
+  $('#profileInventoryGrid').addEventListener('click', event => {
+    const sellButton = event.target.closest('[data-sell-item]');
+    if (sellButton) return sellItem(Number(sellButton.dataset.sellItem));
+    const withdrawButton = event.target.closest('[data-withdraw-item]');
+    if (withdrawButton) return withdrawItem(Number(withdrawButton.dataset.withdrawItem));
   });
 
   ['sourceSearch', 'sourceMinPrice', 'sourceMaxPrice', 'targetSearch', 'targetMinPrice', 'targetMaxPrice']
@@ -416,6 +549,17 @@
     $$('.mobile-tabs button').forEach(item => item.classList.toggle('active', item === button));
     $$('[data-mobile-panel]').forEach(panel => panel.classList.toggle('active-mobile', panel.dataset.mobilePanel === button.dataset.mobileTab));
   }));
+  $$('[data-profile-tab]').forEach(button => button.addEventListener('click', () => {
+    state.profileTab = button.dataset.profileTab;
+    renderProfile();
+  }));
+  $('#sellAllButton').addEventListener('click', sellAllItems);
+  $('#profileOpenButton').addEventListener('click', () => {
+    if (!requireAuth()) return;
+    renderProfile();
+    openModal('profileModal');
+  });
+
   $$('[data-modal-open]').forEach(button => button.addEventListener('click', () => openModal(button.dataset.modalOpen)));
   $$('[data-modal-close]').forEach(button => button.addEventListener('click', () => closeModal(button.closest('.modal'))));
   document.addEventListener('keydown', event => { if (event.key === 'Escape') $$('.modal.open').forEach(closeModal); });
@@ -425,6 +569,7 @@
     closeModal(event.target.closest('.modal'));
     updateAuthUI();
     renderSelection();
+    renderProfile();
     showToast('Steam-аккаунт подключен', 'success');
   });
   $('[data-copy-hash]').addEventListener('click', () => navigator.clipboard?.writeText('9f4d-demo-seed-a81c').then(() => showToast('Хеш скопирован', 'success')).catch(() => showToast('Хеш: 9f4d-demo-seed-a81c')));
@@ -436,6 +581,7 @@
       closeModal($('#bonusModal'));
       showToast('Бонус $25.00 активирован', 'success');
       renderGrid();
+      renderProfile();
     } else showToast('Промокод не найден', 'error');
   });
 
@@ -445,5 +591,6 @@
   renderLive();
   setMarketView('inventory');
   renderSelection();
+  renderProfile();
   updateChance(state.chance);
 })();
