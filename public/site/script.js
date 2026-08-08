@@ -198,7 +198,7 @@
 
   function updateAuthUI() {
     $('.steam-button')?.classList.toggle('hidden-auth', state.isLoggedIn);
-    $('.profile-chip')?.classList.toggle('show', state.isLoggedIn);
+    $('.profile-chip')?.classList.add('show');
     if ($('#upgradeButton')) $('#upgradeButton').disabled = !state.isLoggedIn || state.spinning;
     if ($('#purchaseCartButton')) $('#purchaseCartButton').disabled = !state.isLoggedIn;
     if ($('#profileName')) $('#profileName').textContent = state.user.name;
@@ -690,7 +690,6 @@
   }));
   $('#sellAllButton').addEventListener('click', sellAllItems);
   $('#profileOpenButton').addEventListener('click', () => {
-    if (!requireAuth()) return;
     renderProfile();
     openModal('profileModal');
   });
