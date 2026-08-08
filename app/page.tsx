@@ -3,7 +3,7 @@ export default function Home() {
     <main className="site-shell">
       <iframe
         className="site-frame"
-        src="/site/index.html"
+        src="/site/index.html?v=steam-auth-39"
         title="DotaUp Skin Upgrade Arena"
         allow="clipboard-write"
       />

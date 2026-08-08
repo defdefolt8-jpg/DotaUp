@@ -1,4 +1,4 @@
-﻿(() => {
+(() => {
   'use strict';
 
   const items = [
@@ -35,7 +35,7 @@
     { id: 31, weapon: 'Wraith King', skin: 'The One True King', wear: 'Arcana', price: 2890, color: '#8dfc52', shape: 'crown', imageLabel: 'WK', imageAccent: '#8dfc52', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/skeleton_king.png' },
     { id: 32, weapon: 'Razor', skin: 'Voidstorm Asylum', wear: 'Arcana', price: 2710, color: '#7bd7ff', shape: 'staff', imageLabel: 'Razor', imageAccent: '#7bd7ff', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/razor.png' },
     { id: 33, weapon: 'Spectre', skin: 'Phantom Advent', wear: 'Arcana', price: 2990, color: '#90a2ff', shape: 'daggers', imageLabel: 'Spec', imageAccent: '#90a2ff', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/spectre.png' },
-    { id: 34, weapon: 'Ogre Magi', skin: 'FlockheartвЂ™s Gamble', wear: 'Arcana', price: 1880, color: '#ff9c66', shape: 'hammer', imageLabel: 'Ogre', imageAccent: '#ff9c66', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/ogre_magi.png' },
+    { id: 34, weapon: 'Ogre Magi', skin: 'Flockheart’s Gamble', wear: 'Arcana', price: 1880, color: '#ff9c66', shape: 'hammer', imageLabel: 'Ogre', imageAccent: '#ff9c66', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/ogre_magi.png' },
     { id: 35, weapon: 'Earthshaker', skin: 'Planetfall', wear: 'Arcana', price: 3410, color: '#ffc759', shape: 'hammer', imageLabel: 'ES', imageAccent: '#ffc759', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/earthshaker.png' },
     { id: 36, weapon: 'Phantom Assassin', skin: 'Codicil of the Veiled Ones', wear: 'Immortal', price: 380, color: '#6fbfff', shape: 'daggers', imageLabel: 'PA', imageAccent: '#6fbfff', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/phantom_assassin.png' },
     { id: 37, weapon: 'Invoker', skin: 'Dark Artistry Bracers', wear: 'Mythical', price: 1420, color: '#a878ff', shape: 'staff', imageLabel: 'Invoker', imageAccent: '#a878ff', image: 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/invoker.png' },
@@ -188,7 +188,7 @@
   }
 
   async function hydrateMarketPrices() {
-    setMarketSyncStatus('Steam Market: РѕР±РЅРѕРІР»СЏРµРј С†РµРЅС‹вЂ¦');
+    setMarketSyncStatus('Steam Market: обновляем цены…');
     try {
       const response = await fetch('/api/market-items', { cache: 'no-store' });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -211,14 +211,14 @@
       }
       const syncLabel = state.marketSync.syncedAt
         ? new Date(state.marketSync.syncedAt).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })
-        : 'С‚РѕР»СЊРєРѕ С‡С‚Рѕ';
+        : 'только что';
       if (state.marketSync.status === 'refreshing') {
-        setMarketSyncStatus(`Steam Market: РїРѕРєР°Р·Р°РЅ РєСЌС€ В· С„РѕРЅРѕРІРѕРµ РѕР±РЅРѕРІР»РµРЅРёРµ В· ${syncLabel}`, 'warn');
+        setMarketSyncStatus(`Steam Market: показан кэш · фоновое обновление · ${syncLabel}`, 'warn');
       } else {
-        setMarketSyncStatus(`Steam Market: С†РµРЅС‹ СЃРёРЅС…СЂРѕРЅРёР·РёСЂРѕРІР°РЅС‹ В· ${syncLabel}`, 'ok');
+        setMarketSyncStatus(`Steam Market: цены синхронизированы · ${syncLabel}`, 'ok');
       }
     } catch (error) {
-      setMarketSyncStatus('Steam Market: РЅРµРґРѕСЃС‚СѓРїРµРЅ, РїРѕРєР°Р·Р°РЅС‹ СЃРѕС…СЂР°РЅС‘РЅРЅС‹Рµ С†РµРЅС‹', 'warn');
+      setMarketSyncStatus('Steam Market: недоступен, показаны сохранённые цены', 'warn');
     }
   }
 
@@ -236,14 +236,14 @@
     ];
     const markup = events.map(([user, from, to]) => `<article class="live-event" style="--c:${to.color}">
       <span class="live-avatar">${user[0]}</span><span class="mini-item"><svg viewBox="0 0 100 75" aria-hidden="true">${paths[from.shape]}</svg></span>
-      <span class="live-arrow">в†’</span><span class="mini-item"><svg viewBox="0 0 100 75" aria-hidden="true">${paths[to.shape]}</svg></span>
-      <span class="live-info"><strong>${to.skin}</strong><small>${user} В· ${money(to.price)}</small></span>
+      <span class="live-arrow">→</span><span class="mini-item"><svg viewBox="0 0 100 75" aria-hidden="true">${paths[to.shape]}</svg></span>
+      <span class="live-info"><strong>${to.skin}</strong><small>${user} · ${money(to.price)}</small></span>
     </article>`).join('');
     $('#liveTrack').innerHTML = markup + markup;
   }
 
   function selectedRow(item) {
-    return `<div class="selected-row" style="--rarity:${item.color}">${itemArt(item)}<span><strong>${item.skin}</strong><small>${item.weapon} В· ${item.wear}</small></span><b>${money(item.price)}</b></div>`;
+    return `<div class="selected-row" style="--rarity:${item.color}">${itemArt(item)}<span><strong>${item.skin}</strong><small>${item.weapon} · ${item.wear}</small></span><b>${money(item.price)}</b></div>`;
   }
 
   function updateAuthUI() {
@@ -278,7 +278,7 @@
   function requireAuth() {
     if (state.isLoggedIn) return true;
     window.top.location.href = steamLoginUrl;
-    showToast('РЎРЅР°С‡Р°Р»Р° РІРѕР№РґРё РІ Р°РєРєР°СѓРЅС‚ Steam', 'error');
+    showToast('Сначала войди в аккаунт Steam', 'error');
     return false;
   }
 
@@ -301,13 +301,18 @@
     renderProfile();
   }
 
+  function refreshSteamSession() {
+    if (document.visibilityState === 'hidden') return;
+    hydrateSteamSession();
+  }
+
   async function hydrateSteamSessionAfterReturn() {
     const params = new URLSearchParams(window.location.search);
     const authError = params.get('auth_error');
     const justReturned = params.get('steam_auth') === 'ok';
 
     if (authError) {
-      showToast('Steam login failed. Try again from the browser, not inside the Steam app.', 'error');
+      showToast('Steam не подтвердил вход. Попробуй авторизоваться ещё раз.', 'error');
       window.history.replaceState({}, '', window.location.pathname);
       return hydrateSteamSession();
     }
@@ -336,22 +341,22 @@
     const selected = [...state.sourceIds].map(itemById);
     $('#selectedSources').innerHTML = selected.length
       ? selected.map(selectedRow).join('')
-      : '<div class="empty-state"><div class="plus-ring">+</div><strong>РРЅРІРµРЅС‚Р°СЂСЊ РїСѓСЃС‚</strong><span>РљСѓРїРё РїСЂРµРґРјРµС‚С‹ РІ РјР°РіР°Р·РёРЅРµ РЅРёР¶Рµ</span></div>';
+      : '<div class="empty-state"><div class="plus-ring">+</div><strong>Инвентарь пуст</strong><span>Купи предметы в магазине ниже</span></div>';
 
     const target = itemById(state.targetId);
     $('#selectedTarget').innerHTML = target
       ? selectedRow(target)
-      : '<div class="empty-state"><div class="plus-ring">+</div><strong>Р’С‹Р±РµСЂРё РЅР°РіСЂР°РґСѓ</strong><span>Р¦РµР»СЊ РґР»СЏ Р°РїРіСЂРµР№РґР° РїРѕСЏРІРёС‚СЃСЏ Р·РґРµСЃСЊ</span></div>';
+      : '<div class="empty-state"><div class="plus-ring">+</div><strong>Выбери награду</strong><span>Цель для апгрейда появится здесь</span></div>';
 
     $('#selectedCount').textContent = selected.length;
     $('#mobileSourceCount').textContent = selected.length;
     $('#sourceTotal').textContent = money(sourceTotal());
     $('#targetPrice').textContent = target ? money(target.price) : '$0.00';
-    $('#targetMultiplier').textContent = target && sourceTotal() ? `x${(target.price / sourceTotal()).toFixed(2)}` : 'вЂ”';
-    $('#upgradeCost').textContent = target && selected.length ? `${money(sourceTotal())} в†’ ${money(target.price)}` : 'РЎРѕР±РµСЂРё РёРЅРІРµРЅС‚Р°СЂСЊ Рё РІС‹Р±РµСЂРё С†РµР»СЊ';
+    $('#targetMultiplier').textContent = target && sourceTotal() ? `x${(target.price / sourceTotal()).toFixed(2)}` : '—';
+    $('#upgradeCost').textContent = target && selected.length ? `${money(sourceTotal())} → ${money(target.price)}` : 'Собери инвентарь и выбери цель';
     if (!state.spinning) $('#resultMessage').textContent = !state.isLoggedIn
-      ? 'Р’РѕР№РґРё РІ Steam, С‡С‚РѕР±С‹ РЅР°С‡Р°С‚СЊ Р°РїРіСЂРµР№РґС‹'
-      : target && selected.length ? 'РўРµСЂРјРёРЅР°Р» РіРѕС‚РѕРІ Рє Р·Р°РїСѓСЃРєСѓ' : 'Р’С‹Р±РµСЂРё РїСЂРµРґРјРµС‚С‹ РґР»СЏ Р°РїРіСЂРµР№РґР°';
+      ? 'Войди в Steam, чтобы начать апгрейды'
+      : target && selected.length ? 'Терминал готов к запуску' : 'Выбери предметы для апгрейда';
     syncChanceToSelection();
     updateAuthUI();
   }
@@ -366,7 +371,7 @@
     if (!ownedVisible.length && state.marketView === 'inventory') {
       $('#sourceItemsFound').textContent = '0';
       $('#marketSourceTotal').textContent = money(sourceTotal());
-      $('#sourceItemGrid').innerHTML = '<div class="no-items">РџРѕРєР° РїСѓСЃС‚Рѕ. РџРµСЂРµРєР»СЋС‡РёСЃСЊ РЅР° РјР°РіР°Р·РёРЅ Рё РґРѕР±Р°РІСЊ СЃРєРёРЅС‹ РІ РєРѕСЂР·РёРЅСѓ.</div>';
+      $('#sourceItemGrid').innerHTML = '<div class="no-items">Пока пусто. Переключись на магазин и добавь скины в корзину.</div>';
       return;
     }
 
@@ -382,15 +387,15 @@
       const queued = state.cartIds.has(item.id);
       const canQueue = state.balance >= cartTotal() + item.price && !owned;
       const label = state.marketView === 'inventory'
-        ? (selected ? 'Р’Р«Р‘Р РђРќРћ' : 'Р’Р«Р‘Р РђРўР¬')
-        : (owned ? 'РљРЈРџР›Р•РќРћ' : queued ? 'Р’ РљРћР Р—РРќР•' : canQueue ? 'Р’ РљРћР Р—РРќРЈ' : 'РќР• РҐР’РђРўРђР•Рў');
+        ? (selected ? 'ВЫБРАНО' : 'ВЫБРАТЬ')
+        : (owned ? 'КУПЛЕНО' : queued ? 'В КОРЗИНЕ' : canQueue ? 'В КОРЗИНУ' : 'НЕ ХВАТАЕТ');
       return `<article class="item-card${selected && state.marketView === 'inventory' ? ' selected' : ''}${owned && state.marketView === 'store' ? ' owned' : ''}${queued && state.marketView === 'store' ? ' queued' : ''}" style="--rarity:${item.color}" data-item-id="${item.id}">
         <div class="item-badges"><span class="wear">${item.wear}</span><i class="rarity-dot"></i></div>
-        ${state.marketView === 'store' ? `<button class="cart-corner${queued ? ' active' : ''}" type="button" data-cart-toggle="${item.id}" aria-label="РљРѕСЂР·РёРЅР°">рџ›’</button>` : ''}
+        ${state.marketView === 'store' ? `<button class="cart-corner${queued ? ' active' : ''}" type="button" data-cart-toggle="${item.id}" aria-label="Корзина">🛒</button>` : ''}
         ${itemArt(item)}<span class="item-name">${item.weapon}</span><strong class="item-skin">${item.skin}</strong>
         <div class="item-footer"><span class="item-price">${money(item.price)}</span><button class="select-item" type="button" ${state.marketView === 'store' && !owned && !queued && !canQueue ? 'disabled' : ''}>${label}</button></div>
       </article>`;
-    }).join('') : '<div class="no-items">РџРѕ Р·Р°РґР°РЅРЅС‹Рј С„РёР»СЊС‚СЂР°Рј РїСЂРµРґРјРµС‚С‹ РЅРµ РЅР°Р№РґРµРЅС‹.</div>';
+    }).join('') : '<div class="no-items">По заданным фильтрам предметы не найдены.</div>';
   }
 
   function renderTargetGrid() {
@@ -406,9 +411,9 @@
       return `<article class="item-card${selected ? ' selected' : ''}" style="--rarity:${item.color}" data-item-id="${item.id}">
         <div class="item-badges"><span class="wear">${item.wear}</span><i class="rarity-dot"></i></div>
         ${itemArt(item)}<span class="item-name">${item.weapon}</span><strong class="item-skin">${item.skin}</strong>
-        <div class="item-footer"><span class="item-price">${money(item.price)}</span><button class="select-item" type="button">${selected ? 'Р’Р«Р‘Р РђРќРћ' : 'Р¦Р•Р›Р¬'}</button></div>
+        <div class="item-footer"><span class="item-price">${money(item.price)}</span><button class="select-item" type="button">${selected ? 'ВЫБРАНО' : 'ЦЕЛЬ'}</button></div>
       </article>`;
-    }).join('') : '<div class="no-items">РЎРЅР°С‡Р°Р»Р° РІС‹Р±РµСЂРё РїСЂРµРґРјРµС‚С‹ РІ РёРЅРІРµРЅС‚Р°СЂРµ.</div>';
+    }).join('') : '<div class="no-items">Сначала выбери предметы в инвентаре.</div>';
   }
 
   function renderGrid() {
@@ -427,10 +432,10 @@
     if (!requireAuth()) return;
     const item = itemById(id);
     if (!item) return;
-    if (state.ownedIds.includes(id)) return showToast('Р­С‚РѕС‚ СЃРєРёРЅ СѓР¶Рµ РєСѓРїР»РµРЅ', 'error');
+    if (state.ownedIds.includes(id)) return showToast('Этот скин уже куплен', 'error');
     if (state.cartIds.has(id)) state.cartIds.delete(id);
     else {
-      if (state.balance < cartTotal() + item.price) return showToast('РќРµРґРѕСЃС‚Р°С‚РѕС‡РЅРѕ Р±Р°Р»Р°РЅСЃР° РґР»СЏ РєРѕСЂР·РёРЅС‹', 'error');
+      if (state.balance < cartTotal() + item.price) return showToast('Недостаточно баланса для корзины', 'error');
       state.cartIds.add(id);
     }
     renderGrid();
@@ -439,9 +444,9 @@
   function purchaseCart() {
     if (!requireAuth()) return;
     const ids = [...state.cartIds];
-    if (!ids.length) return showToast('РљРѕСЂР·РёРЅР° РїСѓСЃС‚Р°', 'error');
+    if (!ids.length) return showToast('Корзина пуста', 'error');
     const total = cartTotal();
-    if (state.balance < total) return showToast('РќРµРґРѕСЃС‚Р°С‚РѕС‡РЅРѕ Р±Р°Р»Р°РЅСЃР°', 'error');
+    if (state.balance < total) return showToast('Недостаточно баланса', 'error');
     state.balance -= total;
     ids.forEach(id => {
       if (!state.ownedIds.includes(id)) state.ownedIds.push(id);
@@ -451,7 +456,7 @@
     renderGrid();
     renderSelection();
     renderProfile();
-    showToast(`РљСѓРїР»РµРЅРѕ РїСЂРµРґРјРµС‚РѕРІ: ${ids.length}`, 'success');
+    showToast(`Куплено предметов: ${ids.length}`, 'success');
   }
 
   function selectInventoryItem(id) {
@@ -459,7 +464,7 @@
     if (!state.ownedIds.includes(id)) return;
     if (state.sourceIds.has(id)) state.sourceIds.delete(id);
     else if (state.sourceIds.size < 3) state.sourceIds.add(id);
-    else return showToast('РњРѕР¶РЅРѕ РІС‹Р±СЂР°С‚СЊ РЅРµ Р±РѕР»СЊС€Рµ С‚СЂС‘С… РїСЂРµРґРјРµС‚РѕРІ', 'error');
+    else return showToast('Можно выбрать не больше трёх предметов', 'error');
     if (state.targetId && itemById(state.targetId).price <= sourceTotal()) state.targetId = null;
     renderSelection();
     renderGrid();
@@ -482,14 +487,14 @@
   function chooseTargetForChance(desiredChance) {
     if (!requireAuth()) return;
     const total = sourceTotal();
-    if (!total) return showToast('РЎРЅР°С‡Р°Р»Р° РІС‹Р±РµСЂРё РїСЂРµРґРјРµС‚С‹ РёР· РёРЅРІРµРЅС‚Р°СЂСЏ', 'error');
+    if (!total) return showToast('Сначала выбери предметы из инвентаря', 'error');
     const desiredPrice = total * 100 / desiredChance;
     const candidates = items.filter(item => item.price > total);
-    if (!candidates.length) return showToast('РџРѕРґС…РѕРґСЏС‰РёС… СЃРєРёРЅРѕРІ РїРѕРєР° РЅРµС‚', 'error');
+    if (!candidates.length) return showToast('Подходящих скинов пока нет', 'error');
     state.targetId = candidates.reduce((best, item) => Math.abs(item.price - desiredPrice) < Math.abs(best.price - desiredPrice) ? item : best, candidates[0]).id;
     renderSelection();
     renderGrid();
-    showToast(`РџРѕРґРѕР±СЂР°РЅ С€Р°РЅСЃ ${desiredChance}%`, 'success');
+    showToast(`Подобран шанс ${desiredChance}%`, 'success');
   }
 
   function applyChancePresets(values) {
@@ -522,7 +527,7 @@
         id: `win-${Date.now()}`,
         itemId: wonItem.id,
         price: wonItem.price,
-        status: 'Р’С‹РёРіСЂР°РЅ',
+        status: 'Выигран',
         at: timestampLabel()
       });
     }
@@ -533,7 +538,7 @@
   function runUpgrade() {
     if (!requireAuth()) return;
     if (state.spinning) return;
-    if (!state.sourceIds.size || !state.targetId) return showToast('Р’С‹Р±РµСЂРё РёСЃС…РѕРґРЅС‹Р№ Рё С†РµР»РµРІРѕР№ РїСЂРµРґРјРµС‚', 'error');
+    if (!state.sourceIds.size || !state.targetId) return showToast('Выбери исходный и целевой предмет', 'error');
     const stake = sourceTotal();
     const chanceAtStart = state.chance;
     const targetAtStart = itemById(state.targetId);
@@ -548,7 +553,7 @@
     void $('#radarWrap').offsetWidth;
     $('#radarWrap').classList.add('spinning');
     $('#resultMessage').className = 'result-message';
-    $('#resultMessage').textContent = 'РџСЂРѕРІРµСЂСЏРµРј СЂРµР·СѓР»СЊС‚Р°С‚вЂ¦';
+    $('#resultMessage').textContent = 'Проверяем результат…';
     setTimeout(() => {
       const win = state.mode === 'under' ? roll <= state.chance : roll >= 100 - state.chance;
       state.gameHistory.unshift({
@@ -558,12 +563,12 @@
         chance: chanceAtStart,
         stake,
         roll,
-        result: win ? 'Р’С‹РёРіСЂС‹С€' : 'РџСЂРѕРёРіСЂС‹С€',
+        result: win ? 'Выигрыш' : 'Проигрыш',
         at: timestampLabel()
       });
       $('#resultMessage').className = `result-message ${win ? 'win' : 'lose'}`;
-      $('#resultMessage').textContent = win ? `РЈРЎРџР•РҐ В· РІС‹РїР°Р»Рѕ ${roll.toFixed(2)}` : `РќР•РЈР”РђР§Рђ В· РІС‹РїР°Р»Рѕ ${roll.toFixed(2)}`;
-      showToast(win ? `РђРїРіСЂРµР№Рґ СѓСЃРїРµС€РµРЅ: ${targetAtStart.skin}` : 'РђРїРіСЂРµР№Рґ РЅРµ РїСЂРѕС€С‘Р». РСЃС…РѕРґРЅС‹Рµ РїСЂРµРґРјРµС‚С‹ СЃРїРёСЃР°РЅС‹.', win ? 'success' : 'error');
+      $('#resultMessage').textContent = win ? `УСПЕХ · выпало ${roll.toFixed(2)}` : `НЕУДАЧА · выпало ${roll.toFixed(2)}`;
+      showToast(win ? `Апгрейд успешен: ${targetAtStart.skin}` : 'Апгрейд не прошёл. Исходные предметы списаны.', win ? 'success' : 'error');
       settleInventoryAfterUpgrade(win);
       state.spinning = false;
       $('#upgradeButton').disabled = false;
@@ -587,11 +592,11 @@
     renderSelection();
     renderGrid();
     renderProfile();
-    showToast(`РџСЂРѕРґР°РЅ ${item.skin}`, 'success');
+    showToast(`Продан ${item.skin}`, 'success');
   }
 
   function sellAllItems() {
-    if (!state.ownedIds.length) return showToast('РРЅРІРµРЅС‚Р°СЂСЊ РїСѓСЃС‚', 'error');
+    if (!state.ownedIds.length) return showToast('Инвентарь пуст', 'error');
     const total = ownedItems().reduce((sum, item) => sum + item.price, 0);
     state.ownedIds = [];
     state.sourceIds.clear();
@@ -601,7 +606,7 @@
     renderSelection();
     renderGrid();
     renderProfile();
-    showToast(`РџСЂРѕРґР°РЅРѕ РІСЃС‘ РЅР° ${money(total)}`, 'success');
+    showToast(`Продано всё на ${money(total)}`, 'success');
   }
 
   function withdrawItem(id) {
@@ -614,7 +619,7 @@
 
   function renderProfileInventory() {
     const itemsOwned = ownedItems();
-    const wins = state.gameHistory.filter(game => game.result === 'Р’С‹РёРіСЂС‹С€').length;
+    const wins = state.gameHistory.filter(game => game.result === 'Выигрыш').length;
     const bestWonEntry = [...state.itemHistory].sort((a, b) => b.price - a.price)[0];
     const bestWonItem = bestWonEntry ? itemById(bestWonEntry.itemId) : itemById(state.user.bestDropId);
     const soldValue = $('#profileSoldValue');
@@ -634,11 +639,11 @@
     $('#profileGameHistoryCountBadge').textContent = gameHistoryCount;
     $('#profileActivityCount').textContent = String(itemsOwned.length + state.itemHistory.length + state.gameHistory.length);
     $('#profileReadyToSell').textContent = inventoryCount;
-    $('#profileMarketState').textContent = `Р“РѕС‚РѕРІРѕ Рє РїСЂРѕРґР°Р¶Рµ: ${inventoryCount}`;
+    $('#profileMarketState').textContent = `Готово к продаже: ${inventoryCount}`;
     $('#profileUpgradeCount').textContent = String(state.gameHistory.length);
     $('#profileWinRate').textContent = `Winrate: ${winRate}%`;
     $('#profileBestDropValue').textContent = money(bestWonPrice);
-    $('#profileBestDropName').textContent = bestWonItem ? bestWonItem.skin : 'РџРѕРєР° Р±РµР· РІС‹РёРіСЂС‹С€РµР№';
+    $('#profileBestDropName').textContent = bestWonItem ? bestWonItem.skin : 'Пока без выигрышей';
     const bestDrop = itemById(state.user.bestDropId);
     if (soldValue) soldValue.textContent = money(0);
     if (bestDrop) {
@@ -652,10 +657,10 @@
         <strong>${item.skin}</strong>
         <span>${item.weapon}</span>
         <div class="profile-item-actions">
-          <button type="button" data-sell-item="${item.id}">РџСЂРѕРґР°С‚СЊ</button>
-          <button type="button" data-withdraw-item="${item.id}">Р’С‹РІРµСЃС‚Рё РІ Steam</button>
+          <button type="button" data-sell-item="${item.id}">Продать</button>
+          <button type="button" data-withdraw-item="${item.id}">Вывести в Steam</button>
         </div>
-      </article>`).join('') : '<div class="profile-empty">РЈ РІР°СЃ РїРѕРєР° РЅРµС‚ РїСЂРµРґРјРµС‚РѕРІ</div>';
+      </article>`).join('') : '<div class="profile-empty">У вас пока нет предметов</div>';
   }
 
   function renderProfileHistory() {
@@ -669,26 +674,26 @@
         <span>${item.skin}</span>
         <small>${entry.at}</small>
       </article>`;
-    }).join('') : '<div class="profile-empty">РСЃС‚РѕСЂРёСЏ РїСЂРµРґРјРµС‚РѕРІ РїРѕРєР° РїСѓСЃС‚Р°</div>';
+    }).join('') : '<div class="profile-empty">История предметов пока пуста</div>';
 
     $('#profileGamesList').innerHTML = state.gameHistory.length ? state.gameHistory.map(game => `
-      <article class="profile-game-row ${game.result === 'Р’С‹РёРіСЂС‹С€' ? 'win' : 'lose'}">
+      <article class="profile-game-row ${game.result === 'Выигрыш' ? 'win' : 'lose'}">
         <div><strong>${game.result}</strong><span>${game.targetSkin}</span></div>
-        <div><strong>${game.chance.toFixed(2)}%</strong><span>РЁР°РЅСЃ</span></div>
-        <div><strong>${money(game.stake)}</strong><span>РЎС‚Р°РІРєР°</span></div>
-        <div><strong>${game.roll.toFixed(2)}</strong><span>Р’С‹РїР°Р»Рѕ</span></div>
-        <div><strong>${game.at}</strong><span>Р’СЂРµРјСЏ</span></div>
-      </article>`).join('') : '<div class="profile-empty">РСЃС‚РѕСЂРёСЏ РёРіСЂ РїРѕРєР° РїСѓСЃС‚Р°</div>';
+        <div><strong>${game.chance.toFixed(2)}%</strong><span>Шанс</span></div>
+        <div><strong>${money(game.stake)}</strong><span>Ставка</span></div>
+        <div><strong>${game.roll.toFixed(2)}</strong><span>Выпало</span></div>
+        <div><strong>${game.at}</strong><span>Время</span></div>
+      </article>`).join('') : '<div class="profile-empty">История игр пока пуста</div>';
   }
 
   function renderProfile() {
     renderProfileInventory();
     renderProfileHistory();
     const currentSection = {
-      inventory: ['РРЅРІРµРЅС‚Р°СЂСЊ', 'Р’СЃРµ РїСЂРµРґРјРµС‚С‹ Р°РєРєР°СѓРЅС‚Р°'],
-      items: ['РСЃС‚РѕСЂРёСЏ РїСЂРµРґРјРµС‚РѕРІ', 'РџРѕСЃР»РµРґРЅРёРµ РІС‹РёРіСЂР°РЅРЅС‹Рµ Рё РєСѓРїР»РµРЅРЅС‹Рµ РїСЂРµРґРјРµС‚С‹'],
-      games: ['РСЃС‚РѕСЂРёСЏ РёРіСЂ', 'Р’СЃРµ Р°РїРіСЂРµР№РґС‹, С€Р°РЅСЃС‹ Рё СЂРµР·СѓР»СЊС‚Р°С‚С‹'],
-    }[state.profileTab] || ['РџСЂРѕС„РёР»СЊ', ''];
+      inventory: ['Инвентарь', 'Все предметы аккаунта'],
+      items: ['История предметов', 'Последние выигранные и купленные предметы'],
+      games: ['История игр', 'Все апгрейды, шансы и результаты'],
+    }[state.profileTab] || ['Профиль', ''];
     const currentSectionNode = $('#profileCurrentSection');
     const currentHintNode = $('#profileCurrentHint');
     if (currentSectionNode) currentSectionNode.textContent = currentSection[0];
@@ -739,7 +744,7 @@
     const card = event.target.closest('.item-card');
     if (!card) return;
     if (!requireAuth()) return;
-    if (!state.sourceIds.size) return showToast('РЎРЅР°С‡Р°Р»Р° РІС‹Р±РµСЂРё РїСЂРµРґРјРµС‚С‹ РёР· РёРЅРІРµРЅС‚Р°СЂСЏ', 'error');
+    if (!state.sourceIds.size) return showToast('Сначала выбери предметы из инвентаря', 'error');
     state.targetId = Number(card.dataset.itemId);
     renderSelection();
     renderGrid();
@@ -765,7 +770,7 @@
   $('#randomTarget').addEventListener('click', () => {
     if (!requireAuth()) return;
     const candidates = items.filter(item => item.price > sourceTotal());
-    if (!state.sourceIds.size || !candidates.length) return showToast('РЎРЅР°С‡Р°Р»Р° РІС‹Р±РµСЂРё РїСЂРµРґРјРµС‚С‹ РёР· РёРЅРІРµРЅС‚Р°СЂСЏ', 'error');
+    if (!state.sourceIds.size || !candidates.length) return showToast('Сначала выбери предметы из инвентаря', 'error');
     state.targetId = candidates[Math.floor(Math.random() * candidates.length)].id;
     renderSelection();
     renderGrid();
@@ -790,13 +795,13 @@
   });
   $('#saveChancePresets').addEventListener('click', () => {
     const values = $$('[data-chance-input]').map(input => Number(input.value));
-    if (values.some(value => !Number.isFinite(value) || value < 1 || value > 95)) return showToast('РЈРєР°Р¶Рё РїСЂРѕС†РµРЅС‚С‹ РѕС‚ 1 РґРѕ 95', 'error');
+    if (values.some(value => !Number.isFinite(value) || value < 1 || value > 95)) return showToast('Укажи проценты от 1 до 95', 'error');
     applyChancePresets(values);
     localStorage.setItem('dotaupChancePresets', JSON.stringify(values));
     $('#chanceEditor').classList.remove('open');
     $('#chanceEditor').setAttribute('aria-hidden', 'true');
     $('#chanceSettingsButton').setAttribute('aria-expanded', 'false');
-    showToast('РљРЅРѕРїРєРё РїСЂРѕС†РµРЅС‚РѕРІ СЃРѕС…СЂР°РЅРµРЅС‹', 'success');
+    showToast('Кнопки процентов сохранены', 'success');
   });
   $$('.mode-switch button').forEach(button => button.addEventListener('click', () => {
     state.mode = button.dataset.mode;
@@ -825,23 +830,23 @@
     closeModal(event.target.closest('.modal'));
     window.top.location.href = steamLoginUrl;
   });
-  $('[data-copy-hash]').addEventListener('click', () => navigator.clipboard?.writeText('9f4d-demo-seed-a81c').then(() => showToast('РҐРµС€ СЃРєРѕРїРёСЂРѕРІР°РЅ', 'success')).catch(() => showToast('РҐРµС€: 9f4d-demo-seed-a81c')));
+  $('[data-copy-hash]').addEventListener('click', () => navigator.clipboard?.writeText('9f4d-demo-seed-a81c').then(() => showToast('Хеш скопирован', 'success')).catch(() => showToast('Хеш: 9f4d-demo-seed-a81c')));
   $('#activatePromo').addEventListener('click', () => {
     const valid = $('#promoInput').value.trim().toUpperCase() === 'DOTAUP2026';
     if (valid) {
       state.balance += 25;
       updateBalance();
       closeModal($('#bonusModal'));
-      showToast('Р‘РѕРЅСѓСЃ $25.00 Р°РєС‚РёРІРёСЂРѕРІР°РЅ', 'success');
+      showToast('Бонус $25.00 активирован', 'success');
       renderGrid();
       renderProfile();
-    } else showToast('РџСЂРѕРјРѕРєРѕРґ РЅРµ РЅР°Р№РґРµРЅ', 'error');
+    } else showToast('Промокод не найден', 'error');
   });
 
   loadChancePresets();
   loadProfileState();
   updateBalance();
-  setMarketSyncStatus('Steam Market: РїРѕРґРєР»СЋС‡РµРЅРёРµвЂ¦');
+  setMarketSyncStatus('Steam Market: подключение…');
   renderLive();
   setMarketView('inventory');
   renderSelection();
@@ -849,5 +854,7 @@
   updateChance(state.chance);
   hydrateMarketPrices();
   hydrateSteamSessionAfterReturn();
+  window.addEventListener('focus', refreshSteamSession);
+  document.addEventListener('visibilitychange', refreshSteamSession);
 })();
 

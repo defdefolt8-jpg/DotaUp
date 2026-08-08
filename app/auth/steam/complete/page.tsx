@@ -33,17 +33,14 @@ export default function SteamCompletePage() {
           const payload = await response.json();
 
           if (!alive) return;
-
           if (payload.authenticated) {
             setState("success");
-            setMessage("Steam подключен. Возвращаемся в апгрейдер...");
-            window.setTimeout(() => {
-              window.location.href = "/";
-            }, 650);
+            setMessage("Steam подключён. Возвращаемся в апгрейдер...");
+            window.setTimeout(() => window.location.replace("/?steam_auth=ok"), 450);
             return;
           }
         } catch {
-          // retry below
+          // Steam can take a moment to return the signed session cookie.
         }
 
         await new Promise((resolve) => window.setTimeout(resolve, 450));
@@ -51,14 +48,11 @@ export default function SteamCompletePage() {
 
       if (!alive) return;
       setState("error");
-      setMessage("Steam вернул страницу, но сессия не создалась. Попробуй открыть сайт в обычном браузере и войти ещё раз.");
+      setMessage("Сессия Steam не сохранилась. Открой сайт в обычном браузере и войди ещё раз.");
     }
 
     verifySession();
-
-    return () => {
-      alive = false;
-    };
+    return () => { alive = false; };
   }, [errorFromUrl]);
 
   return (
@@ -70,7 +64,7 @@ export default function SteamCompletePage() {
           {state === "success" ? "✓" : state === "error" ? "!" : "S"}
         </div>
 
-        <h1 className="mt-5 text-2xl font-black">Steam авторизация</h1>
+        <h1 className="mt-5 text-2xl font-black">Авторизация Steam</h1>
         <p className="mt-3 text-sm leading-6 text-zinc-400">{message}</p>
 
         {state === "checking" && (
