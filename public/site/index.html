@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#0d0e12">
-  <meta name="description" content="DotaUp — интерактивный демонстрационный интерфейс апгрейда игровых предметов.">
+  <meta name="description" content="DotaUp — интерактивная демонстрационная платформа апгрейда игровых предметов.">
   <title>DotaUp — Skin Upgrade Arena</title>
   <link rel="stylesheet" href="./style.css">
 </head>
@@ -165,7 +165,7 @@
     <a class="brand footer-brand" href="#upgrade"><span class="brand-mark"><i></i><i></i></span><span><strong>DOTA<span>UP</span></strong><small>PLAY SMART. UPGRADE BOLD.</small></span></a>
     <div class="footer-links"><button data-modal-open="fairnessModal" type="button">Проверка честности</button><a href="#upgrade">Соглашение</a><a href="#upgrade">FAQ</a><a href="mailto:support@dotaup.example">Поддержка</a></div>
     <div class="socials"><a href="#upgrade" aria-label="Telegram">TG</a><a href="#upgrade" aria-label="Discord">DS</a><a href="#upgrade" aria-label="VK">VK</a></div>
-    <p>Демонстрационный интерфейс. DotaUp не связан с Valve Corporation или Steam. Все названия предметов вымышлены.</p>
+    <p>Демонстрационный интерфейс. DotaUp не связан с Valve Corporation или Steam.</p>
   </footer>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -185,64 +185,125 @@
     <div class="modal-card wide profile-modal" role="dialog" aria-modal="true" aria-labelledby="profileTitle">
       <button class="modal-close" data-modal-close aria-label="Закрыть">×</button>
       <div class="profile-shell">
-        <section class="profile-top">
-          <div class="profile-user-card">
-            <div class="profile-user-main">
-              <span class="profile-avatar large">DI</span>
-              <div>
-                <h2 id="profileTitle">Профиль</h2>
-                <strong id="profileName">DemoInvoker</strong>
-                <span id="profileSteamId">ID 602197</span>
+        <section class="profile-hero">
+          <aside class="profile-sidebar">
+            <div class="profile-user-card">
+              <div class="profile-user-main">
+                <span class="profile-avatar large">DI</span>
+                <div>
+                  <h2 id="profileTitle">Профиль</h2>
+                  <strong id="profileName">DemoInvoker</strong>
+                  <span id="profileSteamId">ID 602197</span>
+                </div>
+              </div>
+              <div class="profile-mini-card">
+                <span>Уровень аккаунта</span>
+                <strong id="profileLevel">LVL 27</strong>
+              </div>
+              <div class="profile-mini-grid">
+                <div class="profile-mini-tile">
+                  <span>Предметов</span>
+                  <strong id="profileSidebarItems">0</strong>
+                </div>
+                <div class="profile-mini-tile">
+                  <span>Выигрышей</span>
+                  <strong id="profileSidebarWins">0</strong>
+                </div>
               </div>
             </div>
-            <div class="profile-mini-card">
-              <span>Уровень</span>
-              <strong id="profileLevel">LVL 27</strong>
-            </div>
-          </div>
-          <div class="profile-balance-card">
-            <span>Баланс</span>
-            <strong id="profileBalanceValue">$1250.00</strong>
-            <small>История платежей · демо</small>
-          </div>
-          <div class="profile-best-drop" id="profileBestDrop"></div>
-          <div class="profile-stat-grid">
-            <div class="profile-stat-card"><span>Выведено</span><strong>$0.00</strong></div>
-            <div class="profile-stat-card"><span>Апгрейдов</span><strong id="profileUpgradeCount">0</strong></div>
-          </div>
-        </section>
 
-        <section class="profile-tabs-row">
-          <div class="profile-tabs">
-            <button class="active" type="button" data-profile-tab="inventory">Инвентарь</button>
-            <button type="button" data-profile-tab="items">История предметов</button>
-            <button type="button" data-profile-tab="games">История игр</button>
-          </div>
-          <div class="profile-tools">
-            <button class="profile-secondary" type="button">Доступно для продажи</button>
-            <button class="profile-danger" id="sellAllButton" type="button">Продать всё</button>
+            <div class="profile-nav-card">
+              <button class="active" type="button" data-profile-tab="inventory">Инвентарь</button>
+              <button type="button" data-profile-tab="items">История предметов</button>
+              <button type="button" data-profile-tab="games">История игр</button>
+            </div>
+          </aside>
+
+          <div class="profile-main">
+            <div class="profile-overview-grid">
+              <div class="profile-balance-card profile-overview-card">
+                <span>Баланс</span>
+                <strong id="profileBalanceValue">$1250.00</strong>
+                <small>Доступно для покупок и апгрейдов</small>
+              </div>
+              <div class="profile-stat-card profile-overview-card">
+                <span>Всего апгрейдов</span>
+                <strong id="profileUpgradeCount">0</strong>
+                <small id="profileWinRate">Winrate: 0%</small>
+              </div>
+              <div class="profile-stat-card profile-overview-card">
+                <span>Продано</span>
+                <strong id="profileSoldValue">$0.00</strong>
+                <small>Сумма продаж предметов</small>
+              </div>
+              <div class="profile-stat-card profile-overview-card">
+                <span>Лучший выигрыш</span>
+                <strong id="profileBestDropValue">$0.00</strong>
+                <small id="profileBestDropName">Пока без выигрышей</small>
+              </div>
+            </div>
+
+            <div class="profile-highlight-row">
+              <div class="profile-best-drop profile-panel-card" id="profileBestDrop"></div>
+              <div class="profile-activity-card profile-panel-card">
+                <div class="profile-panel-head">
+                  <strong>Активность</strong>
+                  <span id="profileActivityCount">0</span>
+                </div>
+                <div class="profile-activity-grid">
+                  <div class="profile-activity-tile">
+                    <span>Инвентарь</span>
+                    <strong id="profileInventoryCount">0</strong>
+                  </div>
+                  <div class="profile-activity-tile">
+                    <span>История предметов</span>
+                    <strong id="profileItemHistoryCount">0</strong>
+                  </div>
+                  <div class="profile-activity-tile">
+                    <span>История игр</span>
+                    <strong id="profileGameHistoryCount">0</strong>
+                  </div>
+                  <div class="profile-activity-tile accent">
+                    <span>Готово к продаже</span>
+                    <strong id="profileReadyToSell">0</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <section class="profile-tabs-row">
+              <div class="profile-tabs">
+                <button class="active" type="button" data-profile-tab="inventory">Инвентарь</button>
+                <button type="button" data-profile-tab="items">История предметов</button>
+                <button type="button" data-profile-tab="games">История игр</button>
+              </div>
+              <div class="profile-tools">
+                <button class="profile-secondary" id="profileMarketState" type="button">Готово к продаже: 0</button>
+                <button class="profile-danger" id="sellAllButton" type="button">Продать всё</button>
+              </div>
+            </section>
           </div>
         </section>
 
         <section class="profile-content">
-          <div class="profile-panel" data-profile-panel="inventory">
+          <div class="profile-panel profile-panel-card" data-profile-panel="inventory">
             <div class="profile-panel-head">
               <strong>Инвентарь</strong>
-              <span id="profileInventoryCount">0</span>
+              <span id="profileInventoryCountBadge">0</span>
             </div>
             <div class="profile-grid" id="profileInventoryGrid"></div>
           </div>
-          <div class="profile-panel" data-profile-panel="items" hidden>
+          <div class="profile-panel profile-panel-card" data-profile-panel="items" hidden>
             <div class="profile-panel-head">
               <strong>История предметов</strong>
-              <span id="profileItemHistoryCount">0</span>
+              <span id="profileItemHistoryCountBadge">0</span>
             </div>
             <div class="profile-grid history-grid" id="profileItemHistoryGrid"></div>
           </div>
-          <div class="profile-panel" data-profile-panel="games" hidden>
+          <div class="profile-panel profile-panel-card" data-profile-panel="games" hidden>
             <div class="profile-panel-head">
               <strong>История игр</strong>
-              <span id="profileGameHistoryCount">0</span>
+              <span id="profileGameHistoryCountBadge">0</span>
             </div>
             <div class="profile-games-list" id="profileGamesList"></div>
           </div>

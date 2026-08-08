@@ -492,15 +492,36 @@
 
   function renderProfileInventory() {
     const itemsOwned = ownedItems();
-    $('#profileInventoryCount').textContent = String(itemsOwned.length);
-    $('#profileItemHistoryCount').textContent = String(state.itemHistory.length);
-    $('#profileGameHistoryCount').textContent = String(state.gameHistory.length);
+    const wins = state.gameHistory.filter(game => game.result === 'Выигрыш').length;
+    const bestWonEntry = [...state.itemHistory].sort((a, b) => b.price - a.price)[0];
+    const bestWonItem = bestWonEntry ? itemById(bestWonEntry.itemId) : itemById(state.user.bestDropId);
     const soldValue = $('#profileSoldValue');
-    if (soldValue) soldValue.textContent = money(0);
+    const inventoryCount = String(itemsOwned.length);
+    const itemHistoryCount = String(state.itemHistory.length);
+    const gameHistoryCount = String(state.gameHistory.length);
+    const winRate = state.gameHistory.length ? Math.round((wins / state.gameHistory.length) * 100) : 0;
+    const bestWonPrice = bestWonEntry?.price || bestWonItem?.price || 0;
+
+    $('#profileInventoryCount').textContent = inventoryCount;
+    $('#profileInventoryCountBadge').textContent = inventoryCount;
+    $('#profileSidebarItems').textContent = inventoryCount;
+    $('#profileSidebarWins').textContent = String(wins);
+    $('#profileItemHistoryCount').textContent = itemHistoryCount;
+    $('#profileItemHistoryCountBadge').textContent = itemHistoryCount;
+    $('#profileGameHistoryCount').textContent = gameHistoryCount;
+    $('#profileGameHistoryCountBadge').textContent = gameHistoryCount;
+    $('#profileActivityCount').textContent = String(itemsOwned.length + state.itemHistory.length + state.gameHistory.length);
+    $('#profileReadyToSell').textContent = inventoryCount;
+    $('#profileMarketState').textContent = `Готово к продаже: ${inventoryCount}`;
     $('#profileUpgradeCount').textContent = String(state.gameHistory.length);
+    $('#profileWinRate').textContent = `Winrate: ${winRate}%`;
+    $('#profileBestDropValue').textContent = money(bestWonPrice);
+    $('#profileBestDropName').textContent = bestWonItem ? bestWonItem.skin : 'Пока без выигрышей';
     const bestDrop = itemById(state.user.bestDropId);
+    if (soldValue) soldValue.textContent = money(0);
     if (bestDrop) {
-      $('#profileBestDrop').innerHTML = `<div class="profile-drop-card" style="--rarity:${bestDrop.color}">${itemArt(bestDrop)}<div><strong>${bestDrop.skin}</strong><span>${bestDrop.weapon}</span><b>${money(bestDrop.price)}</b></div></div>`;
+      const displayDrop = bestWonItem || bestDrop;
+      $('#profileBestDrop').innerHTML = `<div class="profile-drop-card" style="--rarity:${displayDrop.color}">${itemArt(displayDrop)}<div><strong>${displayDrop.skin}</strong><span>${displayDrop.weapon}</span><b>${money(bestWonPrice || displayDrop.price)}</b></div></div>`;
     }
     $('#profileInventoryGrid').innerHTML = itemsOwned.length ? itemsOwned.map(item => `
       <article class="profile-item-card" style="--rarity:${item.color}">
@@ -518,6 +539,7 @@
   function renderProfileHistory() {
     $('#profileItemHistoryGrid').innerHTML = state.itemHistory.length ? state.itemHistory.map(entry => {
       const item = itemById(entry.itemId);
+      if (!item) return '';
       return `<article class="profile-history-card" style="--rarity:${item.color}">
         <div class="profile-history-price">${money(entry.price)}</div>
         ${itemArt(item)}
