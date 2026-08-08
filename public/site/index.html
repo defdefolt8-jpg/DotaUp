@@ -184,112 +184,95 @@
     <div class="modal-backdrop" data-modal-close></div>
     <div class="modal-card wide profile-modal" role="dialog" aria-modal="true" aria-labelledby="profileTitle">
       <button class="modal-close" data-modal-close aria-label="Закрыть">×</button>
-      <div class="profile-shell">
-        <section class="profile-hero">
-          <aside class="profile-sidebar">
-            <div class="profile-user-card">
-              <div class="profile-user-main">
-                <span class="profile-avatar large">DI</span>
-                <div>
-                  <h2 id="profileTitle">Профиль</h2>
-                  <strong id="profileName">DemoInvoker</strong>
-                  <span id="profileSteamId">ID 602197</span>
-                </div>
-              </div>
-              <div class="profile-mini-card">
-                <span>Уровень аккаунта</span>
-                <strong id="profileLevel">LVL 27</strong>
-              </div>
-              <div class="profile-mini-grid">
-                <div class="profile-mini-tile">
-                  <span>Предметов</span>
-                  <strong id="profileSidebarItems">0</strong>
-                </div>
-                <div class="profile-mini-tile">
-                  <span>Выигрышей</span>
-                  <strong id="profileSidebarWins">0</strong>
-                </div>
+      <div class="profile-shell profile-shell-ref">
+        <div class="profile-vip-bar">
+          <div class="profile-vip-copy"><strong>VIP CLUB</strong><span>Проверь свой уровень и забирай подарки</span></div>
+          <button type="button" class="profile-vip-button">VIP CLUB</button>
+        </div>
+
+        <section class="profile-hero-ref">
+          <div class="profile-ref-user profile-ref-card">
+            <div class="profile-ref-user-head">
+              <span class="profile-avatar large">DI</span>
+              <div class="profile-ref-user-meta">
+                <h2 id="profileTitle">Профиль</h2>
+                <strong id="profileName">DemoInvoker</strong>
+                <span id="profileSteamId">ID 602197</span>
               </div>
             </div>
-
-            <div class="profile-nav-card">
-              <button class="active" type="button" data-profile-tab="inventory">Инвентарь</button>
-              <button type="button" data-profile-tab="items">История предметов</button>
-              <button type="button" data-profile-tab="games">История игр</button>
-            </div>
-          </aside>
-
-          <div class="profile-main">
-            <div class="profile-overview-grid">
-              <div class="profile-balance-card profile-overview-card">
-                <span>Баланс</span>
-                <strong id="profileBalanceValue">$1250.00</strong>
-                <small>Доступно для покупок и апгрейдов</small>
+            <div class="profile-ref-setting">
+              <div>
+                <strong>Уровень аккаунта</strong>
+                <span id="profileLevel">LVL 27</span>
               </div>
-              <div class="profile-stat-card profile-overview-card">
-                <span>Всего апгрейдов</span>
+            </div>
+            <div class="profile-ref-setting double">
+              <div>
+                <strong>Предметов</strong>
+                <span id="profileSidebarItems">0</span>
+                <small class="profile-hidden-metric" id="profileInventoryCount">0</small>
+              </div>
+              <div>
+                <strong>Выигрышей</strong>
+                <span id="profileSidebarWins">0</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="profile-ref-balance profile-ref-card">
+            <span class="profile-ref-label">Баланс</span>
+            <strong id="profileBalanceValue">50 000 COIN</strong>
+            <small>История платежей</small>
+            <div class="profile-ref-balance-actions">
+              <button type="button" class="profile-ref-input">Введите купон</button>
+              <button type="button" class="profile-ref-apply">Применить</button>
+            </div>
+            <button type="button" class="profile-ref-topup">Пополнить баланс</button>
+          </div>
+
+          <div class="profile-ref-side">
+            <div class="profile-best-drop profile-ref-card profile-ref-drop" id="profileBestDrop"></div>
+            <div class="profile-ref-mini-grid">
+              <div class="profile-ref-card profile-ref-mini">
+                <span>Выведено</span>
+                <strong id="profileSoldValue">0 COIN</strong>
+                <small>0 предметов</small>
+              </div>
+              <div class="profile-ref-card profile-ref-mini">
+                <span>Апгрейдов</span>
                 <strong id="profileUpgradeCount">0</strong>
                 <small id="profileWinRate">Winrate: 0%</small>
-              </div>
-              <div class="profile-stat-card profile-overview-card">
-                <span>Продано</span>
-                <strong id="profileSoldValue">$0.00</strong>
-                <small>Сумма продаж предметов</small>
-              </div>
-              <div class="profile-stat-card profile-overview-card">
-                <span>Лучший выигрыш</span>
-                <strong id="profileBestDropValue">$0.00</strong>
-                <small id="profileBestDropName">Пока без выигрышей</small>
+                <i class="profile-hidden-metric" id="profileGameHistoryCount">0</i>
               </div>
             </div>
-
-            <div class="profile-highlight-row">
-              <div class="profile-best-drop profile-panel-card" id="profileBestDrop"></div>
-              <div class="profile-activity-card profile-panel-card">
-                <div class="profile-panel-head">
-                  <strong>Активность</strong>
-                  <span id="profileActivityCount">0</span>
-                </div>
-                <div class="profile-activity-grid">
-                  <div class="profile-activity-tile">
-                    <span>Инвентарь</span>
-                    <strong id="profileInventoryCount">0</strong>
-                  </div>
-                  <div class="profile-activity-tile">
-                    <span>История предметов</span>
-                    <strong id="profileItemHistoryCount">0</strong>
-                  </div>
-                  <div class="profile-activity-tile">
-                    <span>История игр</span>
-                    <strong id="profileGameHistoryCount">0</strong>
-                  </div>
-                  <div class="profile-activity-tile accent">
-                    <span>Готово к продаже</span>
-                    <strong id="profileReadyToSell">0</strong>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <section class="profile-topbar">
-              <div class="profile-topbar-title">
-                <strong id="profileCurrentSection">Инвентарь</strong>
-                <span id="profileCurrentHint">Все предметы аккаунта</span>
-              </div>
-              <div class="profile-tools">
-                <button class="profile-secondary" id="profileMarketState" type="button">Готово к продаже: 0</button>
-                <button class="profile-danger" id="sellAllButton" type="button">Продать всё</button>
-              </div>
-            </section>
           </div>
         </section>
+
+        <section class="profile-ref-toolbar">
+          <div class="profile-tabs profile-tabs-ref">
+            <button class="active" type="button" data-profile-tab="inventory">Инвентарь</button>
+            <button type="button" data-profile-tab="items">История предметов</button>
+            <button type="button" data-profile-tab="games">История игр</button>
+          </div>
+          <div class="profile-tools profile-tools-ref">
+            <button class="profile-secondary" id="profileMarketState" type="button">Доступно для продажи: 0</button>
+            <button class="profile-danger" id="sellAllButton" type="button">Продать всё</button>
+          </div>
+        </section>
+
+        <div class="profile-hidden-stats" aria-hidden="true">
+          <span id="profileItemHistoryCount">0</span>
+          <span id="profileActivityCount">0</span>
+          <span id="profileReadyToSell">0</span>
+        </div>
 
         <section class="profile-content">
           <div class="profile-panel profile-panel-card" data-profile-panel="inventory">
             <div class="profile-panel-head">
-              <strong>Инвентарь</strong>
+              <strong id="profileCurrentSection">Инвентарь</strong>
               <span id="profileInventoryCountBadge">0</span>
             </div>
+            <div class="profile-panel-subtitle" id="profileCurrentHint">Все предметы аккаунта</div>
             <div class="profile-grid" id="profileInventoryGrid"></div>
           </div>
           <div class="profile-panel profile-panel-card" data-profile-panel="items" hidden>
@@ -297,6 +280,7 @@
               <strong>История предметов</strong>
               <span id="profileItemHistoryCountBadge">0</span>
             </div>
+            <div class="profile-panel-subtitle">Последние выигранные и купленные предметы</div>
             <div class="profile-grid history-grid" id="profileItemHistoryGrid"></div>
           </div>
           <div class="profile-panel profile-panel-card" data-profile-panel="games" hidden>
@@ -304,6 +288,7 @@
               <strong>История игр</strong>
               <span id="profileGameHistoryCountBadge">0</span>
             </div>
+            <div class="profile-panel-subtitle">Все апгрейды, шансы и результаты</div>
             <div class="profile-games-list" id="profileGamesList"></div>
           </div>
         </section>
