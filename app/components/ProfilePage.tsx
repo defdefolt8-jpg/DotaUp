@@ -18,7 +18,6 @@ const mockProfile: ProfileData = {
 
 export function ProfilePage() {
   const [activeTab, setActiveTab] = useState<ProfileTab>("inventory");
-  const [pushEnabled, setPushEnabled] = useState(true);
   const [sellingEnabled, setSellingEnabled] = useState(false);
   const [promoCode, setPromoCode] = useState("");
   const [copied, setCopied] = useState(false);
@@ -52,11 +51,9 @@ export function ProfilePage() {
       <main className="mx-auto flex w-full max-w-[1550px] flex-col gap-6 px-4 py-6 sm:px-6 lg:px-10 lg:py-8">
         <ProfileCard
           profile={profile}
-          pushEnabled={pushEnabled}
           copied={copied}
           promoCode={promoCode}
           onCopyId={handleCopyId}
-          onTogglePush={() => setPushEnabled((value) => !value)}
           onPromoCodeChange={setPromoCode}
           onApplyPromo={handleApplyPromo}
           onTopUp={handleTopUp}

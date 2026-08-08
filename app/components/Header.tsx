@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Bell, CircleDollarSign, MessageCircleMore, Plus, Send, Shield } from "lucide-react";
+import { CircleDollarSign, Plus, Shield } from "lucide-react";
 
 type HeaderProps = {
   balance: number;
@@ -29,18 +29,6 @@ export function Header({ balance, onTopUp }: HeaderProps) {
         </Link>
 
         <div className="flex items-center gap-2 sm:gap-3">
-          <div className="hidden items-center gap-2 rounded-xl border border-[#242a35] bg-[#141820] px-3 py-2 text-zinc-300 md:flex">
-            <button className="rounded-lg p-2 text-zinc-500 transition hover:bg-white/5 hover:text-[#8dfc52]">
-              <Send className="h-4 w-4" />
-            </button>
-            <button className="rounded-lg p-2 text-zinc-500 transition hover:bg-white/5 hover:text-[#8dfc52]">
-              <Bell className="h-4 w-4" />
-            </button>
-            <button className="rounded-lg p-2 text-zinc-500 transition hover:bg-white/5 hover:text-[#8dfc52]">
-              <MessageCircleMore className="h-4 w-4" />
-            </button>
-          </div>
-
           <div className="hidden items-center gap-2 rounded-xl border border-[#242a35] bg-[#141820] px-4 py-2 sm:flex">
             <CircleDollarSign className="h-4 w-4 text-[#8dfc52]" />
             <span className="text-sm text-zinc-500">Баланс</span>

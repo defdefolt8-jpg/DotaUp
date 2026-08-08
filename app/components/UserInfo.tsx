@@ -1,23 +1,15 @@
 "use client";
 
-import { BellRing, Copy, Settings } from "lucide-react";
+import { Copy, Settings } from "lucide-react";
 import type { ProfileData } from "./types";
 
 type UserInfoProps = {
   profile: ProfileData;
-  pushEnabled: boolean;
   copied: boolean;
   onCopyId: () => void;
-  onTogglePush: () => void;
 };
 
-export function UserInfo({
-  profile,
-  pushEnabled,
-  copied,
-  onCopyId,
-  onTogglePush,
-}: UserInfoProps) {
+export function UserInfo({ profile, copied, onCopyId }: UserInfoProps) {
   return (
     <section className="rounded-2xl border border-[#2c3240] bg-[#171b22] p-5 shadow-[0_18px_50px_rgba(0,0,0,0.25)]">
       <div className="flex items-start gap-4">
@@ -49,38 +41,9 @@ export function UserInfo({
         </div>
       </div>
 
-      <div className="mt-5 rounded-xl border border-[#252b37] bg-white/[0.03] p-4">
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#8dfc52]/10 text-[#8dfc52]">
-              <BellRing className="h-5 w-5" />
-            </div>
-            <div>
-              <div className="text-base font-semibold text-white">Push-уведомления</div>
-              <div className="text-sm text-zinc-500">Уникальные предложения</div>
-            </div>
-          </div>
-
-          <button
-            type="button"
-            aria-pressed={pushEnabled}
-            onClick={onTogglePush}
-            className={`relative h-8 w-14 rounded-full transition ${
-              pushEnabled ? "bg-[#8dfc52]" : "bg-white/10"
-            }`}
-          >
-            <span
-              className={`absolute top-1 h-6 w-6 rounded-full bg-white transition ${
-                pushEnabled ? "left-7" : "left-1"
-              }`}
-            />
-          </button>
-        </div>
-      </div>
-
       <button
         type="button"
-        className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-[#313744] bg-[#11151d] px-4 py-4 text-base font-semibold text-zinc-200 transition hover:border-[#8dfc52]/40 hover:text-[#8dfc52]"
+        className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-[#313744] bg-[#11151d] px-4 py-4 text-base font-semibold text-zinc-200 transition hover:border-[#8dfc52]/40 hover:text-[#8dfc52]"
       >
         <Settings className="h-4 w-4" />
         Настройки аккаунта
