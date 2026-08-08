@@ -101,6 +101,7 @@ async function getCachedRows(env: EnvWithDb) {
 
 function isStale(rows: CacheRow[]) {
   if (!rows.length) return true;
+  if (rows.length < MARKET_SEEDS.length) return true;
   const lastUpdated = Math.max(...rows.map((row) => row.updated_at_epoch || 0));
   return Date.now() - lastUpdated > STALE_MS;
 }

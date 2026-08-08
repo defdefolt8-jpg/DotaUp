@@ -91,3 +91,13 @@ test("auth hydration survives optional legacy profile elements", async () => {
   assert.match(script, /hydrateSteamSessionAfterReturn\(\)/);
   assert.match(script, /fetch\('\/api\/auth\/me', \{ credentials: 'include', cache: 'no-store' \}\)/);
 });
+
+test("ships the expanded Steam-synced item catalog", async () => {
+  const script = await readFile(new URL("../public/site/script.js", import.meta.url), "utf8");
+  const catalog = await readFile(new URL("../worker/market-catalog.ts", import.meta.url), "utf8");
+  const sync = await readFile(new URL("../worker/market-sync.ts", import.meta.url), "utf8");
+
+  assert.match(script, /id: 90, weapon: 'Kunkka'/);
+  assert.match(catalog, /id: 90, steamQuery: "Leviathan Whale Blade"/);
+  assert.match(sync, /rows\.length < MARKET_SEEDS\.length/);
+});
