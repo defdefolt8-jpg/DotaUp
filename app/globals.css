@@ -1,12 +1,26 @@
 @import "tailwindcss";
 
+:root {
+  --dota-bg: #080b0d;
+  --dota-panel: #12171a;
+  --dota-red: #b93a32;
+  --dota-red-glow: rgba(185, 58, 50, 0.28);
+  --dota-gold: #c9a85f;
+  --dota-metal: #69737a;
+  --dota-border: rgba(201, 168, 95, 0.18);
+  --dota-text: #f1eee6;
+  --dota-muted: #8b9499;
+}
+
 html,
 body {
   width: 100%;
   height: 100%;
   margin: 0;
-  background: #0d0e12;
-  color: #ffffff;
+  max-width: 100%;
+  overflow-x: clip;
+  background: var(--dota-bg);
+  color: var(--dota-text);
 }
 
 body {
@@ -26,5 +40,5 @@ body {
 .site-frame {
   display: block;
   border: 0;
-  background: #0d0e12;
+  background: var(--dota-bg);
 }

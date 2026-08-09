@@ -3,7 +3,7 @@ export default function Home() {
     <main className="site-shell">
       <iframe
         className="site-frame"
-        src="/site/index.html?v=skins-90"
+        src="/site/index.html?v=dark-fantasy-1"
         title="DotaUp Skin Upgrade Arena"
         allow="clipboard-write"
       />

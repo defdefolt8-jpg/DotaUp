@@ -253,3 +253,107 @@ main{max-width:1550px;margin:auto}.upgrade-section{padding:42px clamp(18px,4vw,6
 @media(max-width:760px){.profile-modal{padding:14px}.profile-overview-grid{grid-template-columns:1fr}.profile-activity-grid,.profile-mini-grid{grid-template-columns:1fr 1fr}.profile-grid,.history-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.profile-topbar{display:block}.profile-tools{margin-top:10px;display:grid}.profile-balance-card strong{font-size:34px}.profile-user-card strong{font-size:24px}.profile-game-row{grid-template-columns:1fr}.profile-nav-card{display:none}.profile-modal .modal-close{top:12px;right:12px;width:34px;height:34px;font-size:20px}}
 @media(max-width:1180px){.profile-hero-ref{grid-template-columns:1fr}.profile-ref-side{grid-template-rows:auto}.profile-ref-mini-grid{grid-template-columns:1fr 1fr}.profile-ref-toolbar{display:block}.profile-tools-ref{margin-top:12px}}
 @media(max-width:760px){.profile-ref-user-meta strong{font-size:24px}.profile-ref-balance strong{font-size:42px}.profile-ref-balance-actions{grid-template-columns:1fr}.profile-drop-card{grid-template-columns:1fr}.profile-drop-card .item-art{height:120px}.profile-tabs-ref{display:grid;grid-template-columns:1fr}.profile-tools-ref{display:grid}.profile-tools-ref .profile-secondary{min-width:0}.profile-ref-setting.double,.profile-ref-mini-grid{grid-template-columns:1fr}}
+
+/* DotaUp dark-fantasy theme layer */
+:root{
+  --dota-bg:#080b0d;
+  --dota-panel:#12171a;
+  --dota-red:#b93a32;
+  --dota-red-glow:rgba(185,58,50,.28);
+  --dota-gold:#c9a85f;
+  --dota-metal:#69737a;
+  --dota-border:rgba(201,168,95,.18);
+  --dota-text:#f1eee6;
+  --dota-muted:#8b9499;
+  --bg:var(--dota-bg);
+  --panel:var(--dota-panel);
+  --line:var(--dota-border);
+  --text:var(--dota-text);
+  --muted:var(--dota-muted);
+  --red:var(--dota-red);
+  --gold:var(--dota-gold);
+}
+
+html,body{width:100%;max-width:100%;overflow-x:clip}
+body{background:radial-gradient(circle at 50% -10%,rgba(185,58,50,.12),transparent 34%),linear-gradient(180deg,#0b0e10 0%,var(--dota-bg) 56%,#07090a 100%);isolation:isolate}
+main,.site-header,.live-strip,.site-footer{position:relative;z-index:1}
+main,.upgrade-section,.inventory-section,.upgrade-workspace,.selection-panel,.upgrade-core,.dual-market,.market-pane,.market-grid,.header-actions,.header-balance{min-width:0;max-width:100%}
+.ambient,.button-shine,.item-card:before,.upgrade-section:before,.inventory-section:before,.upgrade-core:before,.upgrade-core:after,.site-header:after{pointer-events:none}
+.ambient-one{background:var(--dota-red);opacity:.1}
+.ambient-two{background:var(--dota-gold);opacity:.065}
+
+.site-header{z-index:40;border-bottom-color:var(--dota-border);background:linear-gradient(180deg,rgba(13,16,18,.97),rgba(8,11,13,.92));box-shadow:0 10px 30px rgba(0,0,0,.2)}
+.site-header:after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;background:linear-gradient(90deg,transparent,var(--dota-red),var(--dota-gold),transparent);opacity:.55}
+.brand-mark{border-color:rgba(185,58,50,.55);background:linear-gradient(145deg,rgba(185,58,50,.28),rgba(201,168,95,.05))}
+.brand-mark:before,.brand-mark:after,.brand-mark i{background:var(--dota-red);box-shadow:0 0 13px var(--dota-red-glow)}
+.brand strong span,.eyebrow{color:var(--dota-gold)}
+.balance-pill,.steam-button,.profile-chip{border-color:var(--dota-border);background:linear-gradient(145deg,rgba(201,168,95,.08),rgba(18,23,26,.96))}
+.live-strip{border-color:var(--dota-border);background:rgba(12,15,17,.86)}
+.live-label{color:var(--dota-gold);border-color:var(--dota-border)}
+
+.upgrade-section{isolation:isolate}
+.upgrade-section:before{content:"";position:absolute;z-index:-1;inset:4% 5% auto;height:360px;background:radial-gradient(ellipse at center,var(--dota-red-glow),transparent 68%);filter:blur(30px);opacity:.55}
+.upgrade-workspace{border-color:var(--dota-border);background:linear-gradient(145deg,rgba(25,29,29,.97),rgba(10,13,15,.99));box-shadow:0 28px 90px rgba(0,0,0,.48),inset 0 1px 0 rgba(201,168,95,.05)}
+.source-panel,.target-panel{border-color:var(--dota-border)}
+.panel-title span{border-color:rgba(201,168,95,.32);color:var(--dota-gold);background:rgba(201,168,95,.05)}
+.plus-ring{border-color:rgba(201,168,95,.25);background:radial-gradient(circle,rgba(185,58,50,.1),transparent 68%)}
+.upgrade-core{isolation:isolate;background:radial-gradient(circle at 50% 35%,rgba(185,58,50,.15),transparent 34%),linear-gradient(180deg,rgba(201,168,95,.025),transparent)}
+.upgrade-core:before,.upgrade-core:after{content:"";position:absolute;z-index:-1;inset:58px 50% auto;width:300px;max-width:82%;aspect-ratio:1;border:1px solid rgba(201,168,95,.08);transform:translateX(-50%) rotate(45deg)}
+.upgrade-core:after{width:238px;border-color:rgba(185,58,50,.1);transform:translateX(-50%) rotate(22.5deg)}
+.radar-base{fill:#0b0f11;stroke:#30383a}
+.radar-grid,.radar-cross{stroke:rgba(201,168,95,.11)}
+.radar-progress{stroke:var(--dota-red)}
+.radar-sweep{fill:rgba(185,58,50,.07)}
+.radar-pointer{background:linear-gradient(transparent,var(--dota-gold));filter:drop-shadow(0 0 6px rgba(201,168,95,.8))}
+.upgrade-button{background:linear-gradient(120deg,#8e2825,var(--dota-red) 55%,#d05742);color:#fff6e9;box-shadow:0 12px 34px var(--dota-red-glow);border:1px solid rgba(255,190,130,.14)}
+.upgrade-button:hover:not(:disabled){box-shadow:0 16px 42px rgba(185,58,50,.38)}
+.mode-switch button.active,.multiplier-row button.active,.chance-control output{color:var(--dota-gold)}
+.multiplier-row button.active{border-color:rgba(201,168,95,.48);background:rgba(201,168,95,.07)}
+
+.inventory-section{isolation:isolate;border-color:var(--dota-border);background:linear-gradient(180deg,rgba(20,24,24,.78),rgba(8,11,13,0))}
+.inventory-section:before{content:"";position:absolute;z-index:-1;inset:0;background:linear-gradient(115deg,transparent 0 47%,rgba(201,168,95,.025) 47% 48%,transparent 48% 100%);background-size:64px 64px;opacity:.65}
+.dual-market,.market-pane,.profile-ref-card,.profile-panel-card{border-color:var(--dota-border);background:linear-gradient(155deg,rgba(25,30,30,.97),rgba(12,15,17,.99))}
+.item-card{contain:layout paint;border-color:rgba(105,115,122,.28);background:linear-gradient(160deg,color-mix(in srgb,var(--rarity) 8%,#191d1e),#0e1214 68%)}
+.item-card:before{z-index:0}
+.item-card>*{position:relative;z-index:1}
+.item-card:hover{box-shadow:0 16px 38px rgba(0,0,0,.38),0 0 0 1px rgba(201,168,95,.07)}
+.item-art{height:95px;min-height:95px;aspect-ratio:16/10}
+.item-art img{display:block;width:100%;height:100%;object-fit:cover}
+.modal{z-index:100}.toast{z-index:120}.modal-card{max-height:calc(100dvh - 32px);overflow:auto;overscroll-behavior:contain}
+
+@media(max-width:900px){
+  .mobile-tabs,.market-mobile-tabs{z-index:25}
+  .upgrade-core:before,.upgrade-core:after{max-width:70vw}
+}
+
+@media(max-width:620px){
+  body{min-width:0;background:radial-gradient(circle at 50% 7%,rgba(185,58,50,.11),transparent 30%),linear-gradient(180deg,#090c0e,#0d1113)}
+  .site-header{padding-inline:10px;gap:8px}
+  .brand{min-width:0;gap:7px}.brand strong{font-size:15px;white-space:nowrap}.brand-mark{width:32px;height:32px;flex:none}
+  .header-actions{margin-left:auto;gap:5px}.header-balance{gap:4px}.balance-pill{padding-inline:7px}.balance-pill-wide{min-width:92px}
+  .upgrade-section,.inventory-section{padding-inline:10px}
+  .upgrade-core,.selection-panel,.market-pane{overflow:hidden}
+  .upgrade-core:before,.upgrade-core:after{top:52px;width:210px}
+  .market-filters{grid-template-columns:minmax(0,1fr) 66px 66px}
+  .market-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+  .market-grid .item-card{width:100%;min-width:0;height:188px}
+  .market-grid .item-art{height:82px;min-height:82px}
+  .item-footer{gap:4px}.select-item{padding-inline:6px;white-space:nowrap}
+  .profile-modal{width:calc(100vw - 16px);max-width:calc(100vw - 16px);padding:12px}
+  .profile-shell-ref,.profile-hero-ref,.profile-ref-side,.profile-ref-toolbar,.profile-content{min-width:0;max-width:100%}
+  .profile-ref-card,.profile-panel-card{min-width:0;overflow:hidden}
+  .profile-ref-user-head{align-items:flex-start}.profile-ref-user-meta{min-width:0}.profile-ref-user-meta strong,.profile-ref-user-meta span{max-width:100%;overflow-wrap:anywhere}
+  .profile-tabs-ref button,.profile-tools-ref button{width:100%;min-width:0;padding-inline:10px;font-size:13px}
+  .profile-grid,.history-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .site-footer,.footer-links{min-width:0;max-width:100%}
+}
+
+@media(max-width:360px){
+  .brand>span:last-child{display:none}.balance-pill:first-child{display:none}.balance-pill-wide{min-width:82px}
+  .market-filters{grid-template-columns:minmax(0,1fr) 58px 58px}
+  .profile-grid,.history-grid{grid-template-columns:1fr}
+}
+
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}.live-track,.radar-sweep{animation:none!important}.item-card,.upgrade-button,.modal,.modal-card{transition:none!important}
+}
