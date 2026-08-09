@@ -357,3 +357,9 @@ main,.upgrade-section,.inventory-section,.upgrade-workspace,.selection-panel,.up
 @media(prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}.live-track,.radar-sweep{animation:none!important}.item-card,.upgrade-button,.modal,.modal-card{transition:none!important}
 }
+
+/* Compact upgrade controls */
+.upgrade-options{grid-template-columns:minmax(0,1fr) 37px 37px;align-items:center}
+.speed-toggle-button{font-size:16px;color:var(--dota-muted)}
+.speed-toggle-button:hover{color:var(--dota-gold);border-color:rgba(201,168,95,.45)}
+.speed-toggle-button.active{color:#fff4c7;border-color:var(--dota-gold);background:linear-gradient(145deg,rgba(201,168,95,.22),rgba(185,58,50,.16));box-shadow:0 0 18px rgba(201,168,95,.18),inset 0 0 10px rgba(201,168,95,.08)}

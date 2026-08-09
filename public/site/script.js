@@ -116,7 +116,7 @@
     chance: 0,
     mode: 'under',
     spinning: false,
-    spinDuration: 4000,
+    spinDuration: 5000,
     chancePresets: [60, 45, 30, 15],
     balance: 50000,
     marketView: 'inventory',
@@ -814,10 +814,15 @@
   $$('.source-view-switch button').forEach(button => button.addEventListener('click', () => setMarketView(button.dataset.sourceView)));
   $('#purchaseCartButton').addEventListener('click', purchaseCart);
   $$('.multiplier-row button').forEach(button => button.addEventListener('click', () => chooseTargetForChance(Number(button.dataset.chance))));
-  $$('.speed-switch button').forEach(button => button.addEventListener('click', () => {
-    state.spinDuration = button.dataset.speed === 'fast' ? 1000 : 4000;
-    $$('.speed-switch button').forEach(item => item.classList.toggle('active', item === button));
-  }));
+  $('#speedToggleButton').addEventListener('click', () => {
+    const fastEnabled = state.spinDuration !== 1000;
+    state.spinDuration = fastEnabled ? 1000 : 5000;
+    $('#speedToggleButton').classList.toggle('active', fastEnabled);
+    $('#speedToggleButton').setAttribute('aria-pressed', String(fastEnabled));
+    $('#speedToggleButton').setAttribute('aria-label', fastEnabled ? 'Выключить быструю прокрутку' : 'Включить быструю прокрутку');
+    $('#speedToggleButton').title = fastEnabled ? 'Быстрая прокрутка: включена · 1 секунда' : 'Быстрая прокрутка: выключена · 5 секунд';
+    showToast(fastEnabled ? 'Быстрая прокрутка · 1 секунда' : 'Обычная прокрутка · 5 секунд', 'success');
+  });
   $('#chanceSettingsButton').addEventListener('click', () => {
     const editor = $('#chanceEditor');
     const open = editor.classList.toggle('open');
@@ -834,10 +839,6 @@
     $('#chanceSettingsButton').setAttribute('aria-expanded', 'false');
     showToast('Кнопки процентов сохранены', 'success');
   });
-  $$('.mode-switch button').forEach(button => button.addEventListener('click', () => {
-    state.mode = button.dataset.mode;
-    $$('.mode-switch button').forEach(item => item.classList.toggle('active', item === button));
-  }));
   $$('.mobile-tabs button').forEach(button => button.addEventListener('click', () => {
     $$('.mobile-tabs button').forEach(item => item.classList.toggle('active', item === button));
     $$('[data-mobile-panel]').forEach(panel => panel.classList.toggle('active-mobile', panel.dataset.mobilePanel === button.dataset.mobileTab));

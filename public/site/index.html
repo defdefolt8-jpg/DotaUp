@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#080b0d">
   <meta name="description" content="DotaUp — интерактивная демонстрационная платформа апгрейда игровых предметов.">
   <title>DotaUp — Skin Upgrade Arena</title>
-  <link rel="stylesheet" href="./style.css?v=dark-fantasy-1">
+  <link rel="stylesheet" href="./style.css?v=speed-control-1">
 </head>
 <body>
   <div class="ambient ambient-one"></div>
@@ -57,11 +57,6 @@
         </section>
 
         <section class="upgrade-core" aria-label="Настройки апгрейда">
-          <div class="speed-switch speed-switch-top" aria-label="Скорость анимации">
-            <button class="active" type="button" data-speed="normal">ОБЫЧНАЯ · 4S</button>
-            <button type="button" data-speed="fast">FAST · 1S</button>
-          </div>
-
           <div class="radar-wrap" id="radarWrap">
             <svg class="radar" viewBox="0 0 240 240" role="img" aria-label="Шанс успешного апгрейда">
               <defs><filter id="glow"><feGaussianBlur stdDeviation="3.5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
@@ -79,11 +74,6 @@
           <div class="result-message" id="resultMessage" aria-live="polite">Выбери предметы для апгрейда</div>
           <button class="upgrade-button" id="upgradeButton" type="button"><span class="button-shine"></span><b>UPGRADE</b><small id="upgradeCost">Собери инвентарь и выбери цель</small></button>
 
-          <div class="mode-switch" aria-label="Режим указателя">
-            <button class="active" type="button" data-mode="under">UNDER</button>
-            <button type="button" data-mode="over">OVER</button>
-          </div>
-
           <div class="chance-control">
             <div class="auto-chance-head"><span>Автоматический шанс</span><small>Зависит от стоимости выбранной цели</small></div>
             <div class="multiplier-row">
@@ -94,6 +84,7 @@
             </div>
             <div class="upgrade-options">
               <div></div>
+              <button class="chance-settings-button speed-toggle-button" id="speedToggleButton" type="button" aria-label="Включить быструю прокрутку" aria-pressed="false" title="Быстрая прокрутка: выключена">⚡</button>
               <button class="chance-settings-button" id="chanceSettingsButton" type="button" aria-label="Редактировать проценты" aria-expanded="false">⚙</button>
             </div>
             <div class="chance-editor" id="chanceEditor" aria-hidden="true">
@@ -291,6 +282,6 @@
     </div>
   </div>
 
-  <script src="./script.js?v=dark-fantasy-1"></script>
+  <script src="./script.js?v=speed-control-1"></script>
 </body>
 </html>
