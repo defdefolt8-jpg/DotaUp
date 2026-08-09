@@ -116,7 +116,7 @@
     chance: 0,
     mode: 'under',
     spinning: false,
-    spinDuration: 5000,
+    spinDuration: 7000,
     chancePresets: [60, 45, 30, 15],
     balance: 50000,
     marketView: 'inventory',
@@ -816,12 +816,12 @@
   $$('.multiplier-row button').forEach(button => button.addEventListener('click', () => chooseTargetForChance(Number(button.dataset.chance))));
   $('#speedToggleButton').addEventListener('click', () => {
     const fastEnabled = state.spinDuration !== 1000;
-    state.spinDuration = fastEnabled ? 1000 : 5000;
+    state.spinDuration = fastEnabled ? 1000 : 7000;
     $('#speedToggleButton').classList.toggle('active', fastEnabled);
     $('#speedToggleButton').setAttribute('aria-pressed', String(fastEnabled));
     $('#speedToggleButton').setAttribute('aria-label', fastEnabled ? 'Выключить быструю прокрутку' : 'Включить быструю прокрутку');
-    $('#speedToggleButton').title = fastEnabled ? 'Быстрая прокрутка: включена · 1 секунда' : 'Быстрая прокрутка: выключена · 5 секунд';
-    showToast(fastEnabled ? 'Быстрая прокрутка · 1 секунда' : 'Обычная прокрутка · 5 секунд', 'success');
+    $('#speedToggleButton').title = fastEnabled ? 'Быстрая прокрутка: включена · 1 секунда' : 'Быстрая прокрутка: выключена · 7 секунд';
+    showToast(fastEnabled ? 'Быстрая прокрутка · 1 секунда' : 'Обычная прокрутка · 7 секунд', 'success');
   });
   $('#chanceSettingsButton').addEventListener('click', () => {
     const editor = $('#chanceEditor');
