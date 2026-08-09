@@ -769,7 +769,7 @@
     modal.classList.add('open');
     modal.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
-    window.setTimeout(() => $('.modal-close', modal)?.focus(), 0);
+    window.setTimeout(() => $('.modal-close', modal)?.focus({ preventScroll: true }), 80);
   }
 
   function closeModal(modal) {
