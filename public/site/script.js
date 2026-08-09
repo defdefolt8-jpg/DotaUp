@@ -769,7 +769,10 @@
     modal.classList.add('open');
     modal.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
-    window.setTimeout(() => $('.modal-close', modal)?.focus({ preventScroll: true }), 80);
+    window.setTimeout(() => {
+      activeModalTrigger?.blur();
+      $('.modal-close', modal)?.focus({ preventScroll: true });
+    }, 80);
   }
 
   function closeModal(modal) {
@@ -791,7 +794,10 @@
     if (!focusable.length) return;
     const first = focusable[0];
     const last = focusable[focusable.length - 1];
-    if (event.shiftKey && document.activeElement === first) {
+    if (!modal.contains(document.activeElement)) {
+      event.preventDefault();
+      first.focus();
+    } else if (event.shiftKey && document.activeElement === first) {
       event.preventDefault();
       last.focus();
     } else if (!event.shiftKey && document.activeElement === last) {
