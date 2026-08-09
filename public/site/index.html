@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#080b0d">
   <meta name="description" content="DotaUp — интерактивная демонстрационная платформа апгрейда игровых предметов.">
   <title>DotaUp — Skin Upgrade Arena</title>
-  <link rel="stylesheet" href="./style.css?v=spin-5500">
+  <link rel="stylesheet" href="./style.css?v=steam-consent-1">
 </head>
 <body>
   <div class="ambient ambient-one"></div>
@@ -162,7 +162,33 @@
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <div class="modal" id="loginModal" aria-hidden="true">
-    <div class="modal-backdrop" data-modal-close></div><div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="loginTitle"><button class="modal-close" data-modal-close aria-label="Закрыть">×</button><span class="modal-icon">S</span><h2 id="loginTitle">Авторизация Steam</h2><p>Это демонстрационная версия. В реальном продукте здесь будет безопасная авторизация через Steam OpenID.</p><button class="upgrade-button modal-action" type="button" data-demo-login><b>ПРОДОЛЖИТЬ</b></button></div>
+    <div class="modal-backdrop" data-modal-close></div>
+    <div class="modal-card steam-consent-card" role="dialog" aria-modal="true" aria-labelledby="loginTitle" aria-describedby="loginDescription">
+      <button class="modal-close" data-modal-close aria-label="Закрыть окно подтверждения">×</button>
+      <span class="modal-icon steam-consent-icon" aria-hidden="true">S</span>
+      <h2 id="loginTitle">Подтвердите, чтобы продолжить</h2>
+      <p id="loginDescription">Перед входом через Steam необходимо подтвердить следующие условия.</p>
+      <div class="consent-list" role="group" aria-label="Условия входа через Steam">
+        <label class="consent-row" for="ageConsent">
+          <span class="consent-copy">Мне исполнилось 18 лет</span>
+          <span class="consent-switch">
+            <input id="ageConsent" type="checkbox">
+            <span class="consent-track" aria-hidden="true"><span></span></span>
+          </span>
+        </label>
+        <label class="consent-row" for="termsConsent">
+          <span class="consent-copy">Я ознакомился и принимаю <a class="agreement-link" href="#" data-agreement-link aria-disabled="true">Пользовательское соглашение</a></span>
+          <span class="consent-switch">
+            <input id="termsConsent" type="checkbox">
+            <span class="consent-track" aria-hidden="true"><span></span></span>
+          </span>
+        </label>
+      </div>
+      <div class="steam-consent-actions">
+        <button class="consent-cancel" type="button" data-modal-close>Отмена</button>
+        <button class="consent-continue" id="steamConsentContinue" type="button" disabled>Продолжить через Steam</button>
+      </div>
+    </div>
   </div>
   <div class="modal" id="fairnessModal" aria-hidden="true">
     <div class="modal-backdrop" data-modal-close></div><div class="modal-card wide" role="dialog" aria-modal="true" aria-labelledby="fairnessTitle"><button class="modal-close" data-modal-close aria-label="Закрыть">×</button><span class="eyebrow">PROVABLY FAIR</span><h2 id="fairnessTitle">Проверка честности</h2><p>Результат демо-раунда формируется локально в браузере. Для реального сервиса сюда подключается схема server seed + client seed + nonce и независимая проверка хеша.</p><div class="hash-row"><code>9f4d…a81c</code><button type="button" data-copy-hash>Копировать</button></div></div>
@@ -282,6 +308,6 @@
     </div>
   </div>
 
-  <script src="./script.js?v=spin-5500"></script>
+  <script src="./script.js?v=steam-consent-1"></script>
 </body>
 </html>

@@ -79,6 +79,11 @@ test("uses real Steam OpenID routes instead of demo-only auth", async () => {
   assert.doesNotMatch(script, /dotaupSteamLoggedIn/);
   assert.match(index, /id="steamLoginButton"/);
   assert.doesNotMatch(index, /class="steam-button" type="button" data-modal-open/);
+  assert.match(index, /id="ageConsent"/);
+  assert.match(index, /id="termsConsent"/);
+  assert.match(index, /id="steamConsentContinue" type="button" disabled/);
+  assert.match(script, /openModal\('loginModal'/);
+  assert.match(script, /window\.top\.location\.href = steamLoginUrl/);
 });
 
 test("auth hydration survives optional legacy profile elements", async () => {

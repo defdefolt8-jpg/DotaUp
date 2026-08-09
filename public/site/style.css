@@ -371,3 +371,32 @@ main,.upgrade-section,.inventory-section,.upgrade-workspace,.selection-panel,.up
 .profile-ref-setting,.profile-ref-input,.profile-ref-apply,.profile-tabs-ref button,.profile-tools-ref button{border-color:rgba(185,58,50,.18);background:rgba(185,58,50,.045)}
 .profile-ref-topup,.profile-tabs-ref button.active{border-color:#d84b41;background:linear-gradient(135deg,#d84b41,#9d2927);color:#fff5ef;box-shadow:0 12px 28px var(--dota-red-glow)}
 .profile-modal .modal-close{border-color:rgba(185,58,50,.32)}
+
+/* Steam confirmation gate */
+.steam-consent-card{width:min(520px,100%);padding:38px;text-align:left;border-color:rgba(185,58,50,.38);background:radial-gradient(circle at 85% 0,rgba(185,58,50,.16),transparent 34%),linear-gradient(155deg,#202426,#0e1214 72%);box-shadow:0 30px 90px rgba(0,0,0,.6),0 0 38px rgba(185,58,50,.12),inset 0 1px 0 rgba(255,255,255,.04)}
+.steam-consent-card:before{content:"";position:absolute;inset:0;border-radius:inherit;border:1px solid rgba(201,168,95,.08);pointer-events:none}
+.steam-consent-icon{margin:0 0 20px;color:#e65b50;border-color:rgba(185,58,50,.42);background:rgba(185,58,50,.1)}
+.steam-consent-card h2{margin-bottom:10px;font-size:25px;color:var(--dota-text)}
+.steam-consent-card>p{margin-bottom:24px;color:#9ba2a6;font-size:13px;line-height:1.65}
+.consent-list{display:grid;gap:10px}
+.consent-row{display:flex;align-items:center;justify-content:space-between;gap:18px;min-height:66px;padding:14px 15px;border:1px solid rgba(105,115,122,.3);border-radius:12px;background:rgba(8,11,13,.48);cursor:pointer;transition:border-color .2s,background .2s}
+.consent-row:focus-within{border-color:rgba(230,91,80,.72);box-shadow:0 0 0 3px rgba(185,58,50,.12)}
+.consent-row:hover{border-color:rgba(185,58,50,.45)}
+.consent-copy{min-width:0;color:#d9dddc;font-size:13px;line-height:1.45}
+.agreement-link{color:#e66a5e;text-decoration:underline;text-decoration-color:rgba(230,106,94,.42);text-underline-offset:3px}
+.agreement-link:hover{color:#ff8a78}
+.consent-switch{position:relative;flex:none;width:46px;height:26px}
+.consent-switch input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.consent-track{position:absolute;inset:0;border:1px solid #444b4e;border-radius:999px;background:#24292b;transition:.22s}
+.consent-track span{position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#8b9294;box-shadow:0 3px 8px rgba(0,0,0,.35);transition:.22s}
+.consent-switch input:checked+.consent-track{border-color:#d14a40;background:rgba(185,58,50,.34);box-shadow:0 0 16px rgba(185,58,50,.28)}
+.consent-switch input:checked+.consent-track span{left:23px;background:#f06a5e;box-shadow:0 0 10px rgba(240,106,94,.55)}
+.consent-switch input:focus-visible+.consent-track{outline:2px solid #f07868;outline-offset:3px}
+.steam-consent-actions{display:grid;grid-template-columns:130px 1fr;gap:10px;margin-top:24px}
+.consent-cancel,.consent-continue{height:48px;border-radius:10px;font-size:12px;font-weight:900;transition:.2s}
+.consent-cancel{border:1px solid #3b4245;background:#171b1d;color:#aab0b2}
+.consent-cancel:hover{border-color:#697276;color:#fff}
+.consent-continue{border:1px solid #d95649;background:linear-gradient(120deg,#8e2825,#c9453b);color:#fff4ef;box-shadow:0 12px 28px rgba(185,58,50,.24)}
+.consent-continue:hover:not(:disabled){transform:translateY(-1px);filter:brightness(1.08)}
+.consent-continue:disabled{border-color:#33393b;background:#24292b;color:#686f72;box-shadow:none;cursor:not-allowed;opacity:.72}
+@media(max-width:620px){.steam-consent-card{width:100%;padding:28px 18px 18px}.steam-consent-card h2{padding-right:26px;font-size:21px}.consent-row{gap:12px;padding:13px 12px}.consent-copy{font-size:12px}.steam-consent-actions{grid-template-columns:1fr}.consent-cancel{order:2}.consent-continue{order:1}}

@@ -743,9 +743,29 @@
     toastTimer = setTimeout(() => { toast.className = 'toast'; }, 2800);
   }
 
-  function openModal(id) {
+  let activeModalTrigger = null;
+
+  function resetSteamConsentModal() {
+    const ageConsent = $('#ageConsent');
+    const termsConsent = $('#termsConsent');
+    const continueButton = $('#steamConsentContinue');
+    if (!ageConsent || !termsConsent || !continueButton) return;
+    ageConsent.checked = false;
+    termsConsent.checked = false;
+    continueButton.disabled = true;
+  }
+
+  function updateSteamConsentState() {
+    const continueButton = $('#steamConsentContinue');
+    if (!continueButton) return;
+    continueButton.disabled = !($('#ageConsent')?.checked && $('#termsConsent')?.checked);
+  }
+
+  function openModal(id, trigger = document.activeElement) {
     const modal = document.getElementById(id);
     if (!modal) return;
+    activeModalTrigger = trigger instanceof HTMLElement ? trigger : null;
+    if (id === 'loginModal') resetSteamConsentModal();
     modal.classList.add('open');
     modal.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
@@ -753,9 +773,31 @@
   }
 
   function closeModal(modal) {
+    if (!modal) return;
     modal.classList.remove('open');
     modal.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
+    const trigger = activeModalTrigger;
+    activeModalTrigger = null;
+    trigger?.focus();
+  }
+
+  function trapModalFocus(event) {
+    if (event.key !== 'Tab') return;
+    const modal = $('.modal.open');
+    if (!modal) return;
+    const focusable = $$('button:not([disabled]), input:not([disabled]), a[href]:not([aria-disabled="true"]), [tabindex]:not([tabindex="-1"])', modal)
+      .filter(element => element.offsetParent !== null);
+    if (!focusable.length) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
   }
 
   $('#sourceItemGrid').addEventListener('click', event => {
@@ -852,15 +894,33 @@
     window.top.location.href = '/profile';
   });
   $('#steamLoginButton')?.addEventListener('click', () => {
+    openModal('loginModal', $('#steamLoginButton'));
+  });
+
+  $('#ageConsent')?.addEventListener('change', updateSteamConsentState);
+  $('#termsConsent')?.addEventListener('change', updateSteamConsentState);
+  $('[data-agreement-link]')?.addEventListener('click', event => {
+    event.preventDefault();
+    event.stopPropagation();
+    showToast('Ссылка на Пользовательское соглашение будет подключена после добавления страницы');
+  });
+  $('#steamConsentContinue')?.addEventListener('click', () => {
+    if ($('#steamConsentContinue').disabled) return;
     window.top.location.href = steamLoginUrl;
   });
 
   $$('[data-modal-open]').forEach(button => button.addEventListener('click', () => openModal(button.dataset.modalOpen)));
   $$('[data-modal-close]').forEach(button => button.addEventListener('click', () => closeModal(button.closest('.modal'))));
-  document.addEventListener('keydown', event => { if (event.key === 'Escape') $$('.modal.open').forEach(closeModal); });
-  $('[data-demo-login]')?.addEventListener('click', event => {
-    closeModal(event.target.closest('.modal'));
-    window.top.location.href = steamLoginUrl;
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') {
+      const modal = $('.modal.open');
+      if (modal) {
+        event.preventDefault();
+        closeModal(modal);
+      }
+      return;
+    }
+    trapModalFocus(event);
   });
   $('[data-copy-hash]').addEventListener('click', () => navigator.clipboard?.writeText('9f4d-demo-seed-a81c').then(() => showToast('Хеш скопирован', 'success')).catch(() => showToast('Хеш: 9f4d-demo-seed-a81c')));
   $('#activatePromo').addEventListener('click', () => {
