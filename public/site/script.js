@@ -899,7 +899,8 @@
   }));
   $('#sellAllButton').addEventListener('click', sellAllItems);
   $('#profileOpenButton').addEventListener('click', () => {
-    window.top.location.href = '/profile';
+    renderProfile();
+    openModal('profileModal', $('#profileOpenButton'));
   });
   $('#steamLoginButton')?.addEventListener('click', () => {
     openModal('loginModal', $('#steamLoginButton'));
