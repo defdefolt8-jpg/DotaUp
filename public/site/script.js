@@ -151,7 +151,6 @@
       name: 'DemoInvoker',
       steamId: 'ID 602197',
       avatar: null,
-      level: 27,
       bestDropId: 8
     },
     marketSync: {
@@ -378,7 +377,6 @@
     if ($('#purchaseCartButton')) $('#purchaseCartButton').disabled = !state.isLoggedIn;
     if ($('#profileName')) $('#profileName').textContent = state.user.name;
     if ($('#profileSteamId')) $('#profileSteamId').textContent = state.user.steamId;
-    if ($('#profileLevel')) $('#profileLevel').textContent = `LVL ${state.user.level}`;
     syncSteamAvatars();
   }
 
