@@ -21,3 +21,18 @@
   to = "/site/index.html"
   status = 200
 
+[[redirects]]
+  from = "/auth/steam/complete"
+  to = "/site/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/profile"
+  to = "/site/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/site/index.html"
+  status = 200
+
