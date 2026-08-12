@@ -12,7 +12,7 @@
   status = 200
 
 [[redirects]]
-  from = "/profile"
-  to = "/profile/index.html"
+  from = "/"
+  to = "/site/index.html"
   status = 200
 
