@@ -237,10 +237,10 @@
             <strong id="profileBalanceValue">50 000 COIN</strong>
             <small>История платежей</small>
             <div class="profile-ref-balance-actions">
-              <button type="button" class="profile-ref-input">Введите купон</button>
-              <button type="button" class="profile-ref-apply">Применить</button>
+              <input class="profile-ref-input" id="profilePromoInput" type="text" placeholder="Введите купон" maxlength="20" autocomplete="off">
+              <button type="button" class="profile-ref-apply" id="profilePromoApply">Применить</button>
             </div>
-            <button type="button" class="profile-ref-topup">Пополнить баланс</button>
+            <button type="button" class="profile-ref-topup" id="profileTopupButton">Пополнить баланс</button>
           </div>
 
           <div class="profile-ref-side">
@@ -270,6 +270,7 @@
           <div class="profile-tools profile-tools-ref">
             <button class="profile-secondary" id="profileMarketState" type="button">Доступно для продажи: 0</button>
             <button class="profile-danger" id="sellAllButton" type="button">Продать всё</button>
+            <button class="profile-logout" id="profileLogoutButton" type="button">Выйти</button>
           </div>
         </section>
 

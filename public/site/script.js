@@ -705,7 +705,30 @@
     if (!item || !state.ownedIds.includes(id)) return;
     const tradeUrl = window.prompt('Вставь Steam trade-ссылку для вывода предмета');
     if (!tradeUrl) return;
+    if (!/^https:\/\/steamcommunity\.com\/tradeoffer\/new\/\?partner=\d+&token=[\w-]+/i.test(tradeUrl.trim())) {
+      return showToast('Неверная Steam trade-ссылка', 'error');
+    }
     showToast(`Заявка на вывод ${item.skin} создана`, 'success');
+  }
+
+  function applyProfilePromo() {
+    const input = $('#profilePromoInput');
+    const code = input.value.trim().toUpperCase();
+    if (!code) return showToast('Введите промокод', 'error');
+    if (code !== 'DOTAUP2026') return showToast('Промокод не найден', 'error');
+    if (localStorage.getItem('dotaupPromoDOTAUP2026') === 'used') return showToast('Промокод уже использован', 'error');
+    state.balance += 25;
+    localStorage.setItem('dotaupPromoDOTAUP2026', 'used');
+    input.value = '';
+    updateBalance();
+    renderProfile();
+    saveProfileState();
+    showToast('Начислено 25 COIN', 'success');
+  }
+
+  function logoutSteam() {
+    closeModal($('#profileModal'));
+    window.location.href = authUrl('/api/auth/logout?return_to=/');
   }
 
   function renderProfileInventory() {
@@ -958,6 +981,20 @@
     renderProfile();
   }));
   $('#sellAllButton').addEventListener('click', sellAllItems);
+  $('#profileMarketState').addEventListener('click', () => {
+    state.profileTab = 'inventory';
+    renderProfile();
+    $('#profileInventoryGrid').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+  $('#profilePromoApply').addEventListener('click', applyProfilePromo);
+  $('#profilePromoInput').addEventListener('keydown', event => {
+    if (event.key === 'Enter') applyProfilePromo();
+  });
+  $('#profileTopupButton').addEventListener('click', () => {
+    closeModal($('#profileModal'));
+    openModal('bonusModal', $('#profileTopupButton'));
+  });
+  $('#profileLogoutButton').addEventListener('click', logoutSteam);
   $('#profileOpenButton').addEventListener('click', () => {
     renderProfile();
     openModal('profileModal', $('#profileOpenButton'));
