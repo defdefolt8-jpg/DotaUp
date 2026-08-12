@@ -141,10 +141,13 @@
   const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
   const authBaseUrl = String(window.DOTAUP_AUTH_BASE_URL || '').replace(/\/+$/, '');
   const authUrl = (path) => `${authBaseUrl}${path}`;
-  const steamLoginUrl = authUrl(`/api/auth/steam/login?return_to=${encodeURIComponent('/')}`);
+  const steamLoginUrl = authUrl(`/api/auth/steam/login?return_to=${encodeURIComponent('/auth/steam/complete')}`);
   const profileStateKey = 'dotaupProfileState';
   let profileSyncTimer = null;
   let profileSyncReady = false;
+  let authRequestSequence = 0;
+  let audioContext = null;
+  let spinSoundTimer = null;
   const money = value => `${Math.round(value).toLocaleString('ru-RU')} COIN`;
   const itemById = id => items.find(item => item.id === Number(id));
   const ownedItems = () => state.ownedIds.map(itemById).filter(Boolean);
@@ -337,14 +340,69 @@
   }
 
   function updateAuthUI() {
-    $('.steam-button')?.classList.toggle('hidden-auth', state.isLoggedIn);
-    $('.profile-chip')?.classList.toggle('show', state.isLoggedIn);
+    $$('.steam-button').forEach(button => {
+      button.classList.toggle('hidden-auth', state.isLoggedIn);
+      button.hidden = state.isLoggedIn;
+      button.setAttribute('aria-hidden', String(state.isLoggedIn));
+    });
+    $$('.profile-chip').forEach(button => {
+      button.classList.toggle('show', state.isLoggedIn);
+      button.hidden = !state.isLoggedIn;
+    });
     if ($('#upgradeButton')) $('#upgradeButton').disabled = !state.isLoggedIn || state.spinning;
     if ($('#purchaseCartButton')) $('#purchaseCartButton').disabled = !state.isLoggedIn;
     if ($('#profileName')) $('#profileName').textContent = state.user.name;
     if ($('#profileSteamId')) $('#profileSteamId').textContent = state.user.steamId;
     if ($('#profileLevel')) $('#profileLevel').textContent = `LVL ${state.user.level}`;
     syncSteamAvatars();
+  }
+
+  function audioTone(frequency, duration = 0.08, volume = 0.035, type = 'sine', delay = 0) {
+    try {
+      audioContext ||= new (window.AudioContext || window.webkitAudioContext)();
+      const start = audioContext.currentTime + delay;
+      const oscillator = audioContext.createOscillator();
+      const gain = audioContext.createGain();
+      oscillator.type = type;
+      oscillator.frequency.setValueAtTime(frequency, start);
+      gain.gain.setValueAtTime(0.0001, start);
+      gain.gain.exponentialRampToValueAtTime(volume, start + 0.008);
+      gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+      oscillator.connect(gain).connect(audioContext.destination);
+      oscillator.start(start);
+      oscillator.stop(start + duration + 0.02);
+    } catch { /* Audio is optional. */ }
+  }
+
+  function playButtonSound() {
+    audioTone(190, 0.06, 0.035, 'square');
+    audioTone(285, 0.08, 0.025, 'triangle', 0.035);
+  }
+
+  function startSpinSound() {
+    clearInterval(spinSoundTimer);
+    let tick = 0;
+    audioTone(120, 0.12, 0.04, 'sawtooth');
+    spinSoundTimer = setInterval(() => {
+      audioTone(330 + (tick % 8) * 24, 0.035, 0.018, 'square');
+      tick += 1;
+    }, state.spinDuration === 1000 ? 70 : 135);
+  }
+
+  function stopSpinSound(win) {
+    clearInterval(spinSoundTimer);
+    spinSoundTimer = null;
+    const notes = win ? [392, 523, 659, 784] : [220, 185, 147];
+    notes.forEach((note, index) => audioTone(note, win ? 0.28 : 0.22, win ? 0.055 : 0.04, win ? 'triangle' : 'sawtooth', index * 0.09));
+  }
+
+  function showVictoryFx(item) {
+    const fx = $('#victoryFx');
+    $('#victoryItem').textContent = item.skin;
+    fx.classList.remove('show');
+    void fx.offsetWidth;
+    fx.classList.add('show');
+    setTimeout(() => fx.classList.remove('show'), 1900);
   }
 
   function userInitials(name) {
@@ -373,9 +431,11 @@
   }
 
   async function hydrateSteamSession() {
+    const requestSequence = ++authRequestSequence;
     try {
-      const response = await fetch(authUrl('/api/auth/me'), { credentials: 'include', cache: 'no-store' });
+      const response = await fetch('/api/auth/me', { credentials: 'include', cache: 'no-store' });
       const payload = await response.json();
+      if (requestSequence !== authRequestSequence) return state.isLoggedIn;
       state.isLoggedIn = Boolean(payload.authenticated);
       if (payload.user) {
         state.user.name = payload.user.displayName || state.user.name;
@@ -384,12 +444,14 @@
         saveProfileState();
       }
     } catch {
+      if (requestSequence !== authRequestSequence) return state.isLoggedIn;
       state.isLoggedIn = false;
     }
     updateAuthUI();
     renderSelection();
     renderProfile();
     if (state.isLoggedIn) await hydrateServerProfile();
+    return state.isLoggedIn;
   }
 
   function refreshSteamSession() {
@@ -637,6 +699,8 @@
     const extraTurns = state.spinDuration === 1000 ? 3 : 6;
     const endAngle = extraTurns * 360 + (roll * 3.6);
     state.spinning = true;
+    playButtonSound();
+    startSpinSound();
     $('#upgradeButton').disabled = true;
     $('#radarWrap').classList.remove('spinning');
     $('#radarWrap').style.setProperty('--spin-duration', `${state.spinDuration}ms`);
@@ -647,6 +711,7 @@
     $('#resultMessage').textContent = 'Проверяем результат…';
     setTimeout(() => {
       const win = state.mode === 'under' ? roll <= state.chance : roll >= 100 - state.chance;
+      stopSpinSound(win);
       state.gameHistory.unshift({
         id: `game-${Date.now()}`,
         targetId: targetAtStart.id,
@@ -660,6 +725,7 @@
       $('#resultMessage').className = `result-message ${win ? 'win' : 'lose'}`;
       $('#resultMessage').textContent = win ? `УСПЕХ · выпало ${roll.toFixed(2)}` : `НЕУДАЧА · выпало ${roll.toFixed(2)}`;
       showToast(win ? `Апгрейд успешен: ${targetAtStart.skin}` : 'Апгрейд не прошёл. Исходные предметы списаны.', win ? 'success' : 'error');
+      if (win) showVictoryFx(targetAtStart);
       settleInventoryAfterUpgrade(win);
       state.spinning = false;
       $('#upgradeButton').disabled = false;
@@ -1052,6 +1118,12 @@
   updateChance(state.chance);
   hydrateMarketPrices();
   hydrateSteamSessionAfterReturn();
+  const onlineNode = $('#onlineCount');
+  let onlineCount = 62;
+  setInterval(() => {
+    onlineCount = Math.max(50, Math.min(70, onlineCount + Math.floor(Math.random() * 5) - 2));
+    if (onlineNode) onlineNode.textContent = String(onlineCount);
+  }, 4200);
   window.addEventListener('focus', refreshSteamSession);
   document.addEventListener('visibilitychange', refreshSteamSession);
 })();
