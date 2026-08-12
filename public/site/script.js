@@ -139,7 +139,9 @@
 
   const $ = (selector, root = document) => root.querySelector(selector);
   const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
-  const steamLoginUrl = `/api/auth/steam/login?return_to=${encodeURIComponent('/auth/steam/complete')}`;
+  const authBaseUrl = String(window.DOTAUP_AUTH_BASE_URL || '').replace(/\/+$/, '');
+  const authUrl = (path) => `${authBaseUrl}${path}`;
+  const steamLoginUrl = authUrl(`/api/auth/steam/login?return_to=${encodeURIComponent('/')}`);
   const profileStateKey = 'dotaupProfileState';
   const money = value => `${Math.round(value).toLocaleString('ru-RU')} COIN`;
   const itemById = id => items.find(item => item.id === Number(id));
@@ -313,7 +315,7 @@
 
   async function hydrateSteamSession() {
     try {
-      const response = await fetch('/api/auth/me', { credentials: 'include', cache: 'no-store' });
+      const response = await fetch(authUrl('/api/auth/me'), { credentials: 'include', cache: 'no-store' });
       const payload = await response.json();
       state.isLoggedIn = Boolean(payload.authenticated);
       if (payload.user) {

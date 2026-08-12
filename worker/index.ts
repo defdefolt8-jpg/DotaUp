@@ -98,6 +98,7 @@ const worker = {
         } : null,
       }, {
         headers: {
+          ...corsHeaders(request),
           "cache-control": "no-store",
         },
       });
@@ -109,7 +110,7 @@ const worker = {
         status: 302,
         headers: {
           location: returnTo,
-          "set-cookie": `${STEAM_SESSION_COOKIE}=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Lax`,
+          "set-cookie": `${STEAM_SESSION_COOKIE}=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Lax${cookieDomain(request)}`,
         },
       });
     }
@@ -178,7 +179,7 @@ async function finishSteamLogin(request: Request, env: Env): Promise<Response> {
     status: 302,
     headers: {
       location: withAuthStatus(returnTo, "ok"),
-      "set-cookie": await createSteamSessionCookie(env, profile),
+      "set-cookie": await createSteamSessionCookie(request, env, profile),
     },
   });
 }
@@ -311,7 +312,7 @@ async function upsertSteamUser(env: Env, profile: SteamProfile): Promise<void> {
   `).bind(profile.steamId, profile.displayName, profile.avatarUrl, now).run();
 }
 
-async function createSteamSessionCookie(env: Env, profile: SteamProfile): Promise<string> {
+async function createSteamSessionCookie(request: Request, env: Env, profile: SteamProfile): Promise<string> {
   const now = Math.floor(Date.now() / 1000);
   const session: SteamSession = {
     steamId: profile.steamId,
@@ -322,7 +323,7 @@ async function createSteamSessionCookie(env: Env, profile: SteamProfile): Promis
   };
   const payload = base64UrlEncodeString(JSON.stringify(session));
   const signature = await signValue(env, payload);
-  return `${STEAM_SESSION_COOKIE}=${payload}.${signature}; Path=/; Max-Age=${STEAM_SESSION_TTL_SECONDS}; HttpOnly; Secure; SameSite=Lax`;
+  return `${STEAM_SESSION_COOKIE}=${payload}.${signature}; Path=/; Max-Age=${STEAM_SESSION_TTL_SECONDS}; HttpOnly; Secure; SameSite=Lax${cookieDomain(request)}`;
 }
 
 async function readSteamSession(request: Request, env: Env): Promise<SteamSession | null> {
@@ -350,6 +351,21 @@ function getCookie(request: Request, name: string): string | null {
   const prefix = `${name}=`;
   const value = parts.find((part) => part.startsWith(prefix));
   return value ? value.slice(prefix.length) : null;
+}
+
+function corsHeaders(request: Request) {
+  const origin = request.headers.get("origin");
+  if (!origin) return {};
+  return {
+    "access-control-allow-origin": origin,
+    "access-control-allow-credentials": "true",
+    "vary": "origin",
+  };
+}
+
+function cookieDomain(request: Request) {
+  const host = new URL(request.url).hostname;
+  return host.endsWith("dotaup.ru") ? "; Domain=.dotaup.ru" : "";
 }
 
 async function signValue(env: Env, value: string): Promise<string> {

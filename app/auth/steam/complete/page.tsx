@@ -4,6 +4,14 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 
 type AuthState = "checking" | "success" | "error";
+function authBaseUrl() {
+  const runtimeBase = typeof window !== "undefined" ? (window as Window & { DOTAUP_AUTH_BASE_URL?: string }).DOTAUP_AUTH_BASE_URL : "";
+  return (runtimeBase || process.env.NEXT_PUBLIC_AUTH_BASE_URL || "").replace(/\/+$/, "");
+}
+
+function authUrl(path: string) {
+  return `${authBaseUrl()}${path}`;
+}
 
 export default function SteamCompletePage() {
   const [state, setState] = useState<AuthState>("checking");
@@ -26,7 +34,7 @@ export default function SteamCompletePage() {
 
       for (let attempt = 0; attempt < 8; attempt += 1) {
         try {
-          const response = await fetch("/api/auth/me", {
+          const response = await fetch(authUrl("/api/auth/me"), {
             credentials: "include",
             cache: "no-store",
           });
@@ -78,7 +86,7 @@ export default function SteamCompletePage() {
             <Link href="/" className="rounded-xl bg-[#8dfc52] px-5 py-3 text-sm font-black text-[#10200c] transition hover:brightness-110">
               Вернуться на сайт
             </Link>
-            <Link href="/api/auth/steam/login?return_to=%2Fauth%2Fsteam%2Fcomplete" className="rounded-xl border border-[#313744] bg-[#141820] px-5 py-3 text-sm font-black text-zinc-200 transition hover:border-[#8dfc52]/40 hover:text-[#8dfc52]">
+            <Link href={authUrl("/api/auth/steam/login?return_to=%2Fauth%2Fsteam%2Fcomplete")} className="rounded-xl border border-[#313744] bg-[#141820] px-5 py-3 text-sm font-black text-zinc-200 transition hover:border-[#8dfc52]/40 hover:text-[#8dfc52]">
               Попробовать ещё раз
             </Link>
           </div>

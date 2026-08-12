@@ -8,6 +8,14 @@ import { ProfileTabs } from "./ProfileTabs";
 import type { GameHistoryEntry, ItemHistoryEntry, ProfileData, ProfileTab, SiteItem } from "./types";
 
 const profileStateKey = "dotaupProfileState";
+function authBaseUrl() {
+  const runtimeBase = typeof window !== "undefined" ? (window as Window & { DOTAUP_AUTH_BASE_URL?: string }).DOTAUP_AUTH_BASE_URL : "";
+  return (runtimeBase || process.env.NEXT_PUBLIC_AUTH_BASE_URL || "").replace(/\/+$/, "");
+}
+
+function authUrl(path: string) {
+  return `${authBaseUrl()}${path}`;
+}
 
 type SavedProfileState = {
   balance?: number;
@@ -100,7 +108,7 @@ export function ProfilePage() {
   useEffect(() => {
     let alive = true;
 
-    fetch("/api/auth/me", { credentials: "include", cache: "no-store" })
+    fetch(authUrl("/api/auth/me"), { credentials: "include", cache: "no-store" })
       .then((response) => response.json())
       .then((payload: { authenticated?: boolean; user?: { steamId?: string; displayName?: string; avatar?: string | null } | null }) => {
         if (!alive || !payload.authenticated || !payload.user?.steamId) return;
@@ -136,7 +144,7 @@ export function ProfilePage() {
   };
 
   const handleLogout = () => {
-    window.location.href = "/api/auth/logout?return_to=/";
+    window.location.href = authUrl("/api/auth/logout?return_to=/");
   };
 
   const handleSellItem = (itemId: number) => {
