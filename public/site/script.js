@@ -143,6 +143,8 @@
   const authUrl = (path) => `${authBaseUrl}${path}`;
   const steamLoginUrl = authUrl(`/api/auth/steam/login?return_to=${encodeURIComponent('/')}`);
   const profileStateKey = 'dotaupProfileState';
+  let profileSyncTimer = null;
+  let profileSyncReady = false;
   const money = value => `${Math.round(value).toLocaleString('ru-RU')} COIN`;
   const itemById = id => items.find(item => item.id === Number(id));
   const ownedItems = () => state.ownedIds.map(itemById).filter(Boolean);
@@ -193,8 +195,65 @@
         updatedAt: new Date().toISOString()
       };
       localStorage.setItem(profileStateKey, JSON.stringify(payload));
+      if (profileSyncReady && state.isLoggedIn) scheduleProfileSync(payload);
     } catch {
       // Local persistence is only used to keep the demo UI in sync.
+    }
+  }
+
+  function profilePayload() {
+    return {
+      balance: state.balance,
+      ownedIds: state.ownedIds,
+      ownedItems: ownedItems().map(itemSnapshot).filter(Boolean),
+      itemHistory: state.itemHistory,
+      gameHistory: state.gameHistory,
+      user: state.user
+    };
+  }
+
+  function scheduleProfileSync(payload = profilePayload()) {
+    clearTimeout(profileSyncTimer);
+    profileSyncTimer = setTimeout(() => syncProfileToServer(payload), 350);
+  }
+
+  async function syncProfileToServer(payload = profilePayload()) {
+    if (!state.isLoggedIn) return;
+    try {
+      await fetch(authUrl('/api/profile'), {
+        method: 'PUT',
+        credentials: 'include',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+    } catch {
+      // The local copy remains available until the connection recovers.
+    }
+  }
+
+  async function hydrateServerProfile() {
+    if (!state.isLoggedIn) return;
+    try {
+      const response = await fetch(authUrl('/api/profile'), { credentials: 'include', cache: 'no-store' });
+      if (!response.ok) return;
+      const { profile } = await response.json();
+      if (profile) {
+        if (Number.isFinite(Number(profile.balance))) state.balance = Number(profile.balance);
+        if (Array.isArray(profile.ownedIds)) state.ownedIds = profile.ownedIds.map(Number).filter(id => itemById(id));
+        if (Array.isArray(profile.itemHistory)) state.itemHistory = profile.itemHistory;
+        if (Array.isArray(profile.gameHistory)) state.gameHistory = profile.gameHistory;
+      } else {
+        await syncProfileToServer();
+      }
+      localStorage.setItem(profileStateKey, JSON.stringify({ ...profilePayload(), updatedAt: new Date().toISOString() }));
+      updateBalance();
+      renderGrid();
+      renderSelection();
+      renderProfile();
+    } catch {
+      // Offline mode continues from localStorage.
+    } finally {
+      profileSyncReady = true;
     }
   }
 
@@ -330,6 +389,7 @@
     updateAuthUI();
     renderSelection();
     renderProfile();
+    if (state.isLoggedIn) await hydrateServerProfile();
   }
 
   function refreshSteamSession() {
