@@ -42,7 +42,7 @@ async function finishLogin(request, url) {
   const returnTo = safeReturnTo(url.searchParams.get("return_to"));
   const claimedId = url.searchParams.get("openid.claimed_id") || url.searchParams.get("openid.identity") || "";
   const steamId = claimedId.match(/steamcommunity\.com\/openid\/id\/(\d{15,25})/i)?.[1];
-  if (!steamId || !(await verifyOpenId(url))) return redirectWith(returnTo, "auth_error", "steam_validation_failed");
+  if (!steamId || !(await verifyOpenId(url))) return redirectWith(url.origin, returnTo, "auth_error", "steam_validation_failed");
 
   const profile = await fetchProfile(steamId);
   const now = Math.floor(Date.now() / 1000);
@@ -103,7 +103,10 @@ async function fetchProfile(steamId) {
 function readSession(raw) {
   if (!raw) return null;
   const [payload, signature] = raw.split(".");
-  if (!payload || !signature || !crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(sign(payload)))) return null;
+  if (!payload || !signature) return null;
+  const suppliedSignature = Buffer.from(signature);
+  const expectedSignature = Buffer.from(sign(payload));
+  if (suppliedSignature.length !== expectedSignature.length || !crypto.timingSafeEqual(suppliedSignature, expectedSignature)) return null;
   try {
     const session = JSON.parse(Buffer.from(payload, "base64url").toString("utf8"));
     return session.steamId && session.expiresAt > Math.floor(Date.now() / 1000) ? session : null;
@@ -119,6 +122,10 @@ function sign(value) {
 function base64url(value) { return Buffer.from(value, "utf8").toString("base64url"); }
 function cookie(header, name) { return header?.split(";").map(v => v.trim()).find(v => v.startsWith(`${name}=`))?.slice(name.length + 1) || null; }
 function safeReturnTo(value) { return value?.startsWith("/") && !value.startsWith("//") ? value : "/"; }
-function redirectWith(returnTo, key, value) { const target = new URL(returnTo, "https://dotaup.local"); target.searchParams.set(key, value); return Response.redirect(`${target.pathname}${target.search}`, 302); }
+function redirectWith(origin, returnTo, key, value) {
+  const target = new URL(returnTo, origin);
+  target.searchParams.set(key, value);
+  return new Response(null, { status: 302, headers: { location: `${target.pathname}${target.search}${target.hash}` } });
+}
 function tag(xml, name) { return xml.match(new RegExp(`<${name}>\\s*(?:<!\\[CDATA\\[)?([\\s\\S]*?)(?:\\]\\]>)?\\s*<\\/${name}>`, "i"))?.[1]?.trim() || null; }
 function decodeXml(value) { return value?.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'") || null; }
